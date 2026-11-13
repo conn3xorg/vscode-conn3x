@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Conn3x circuit",
+  "scopeName": "source.hcl.conn3x",
+  "patterns": [{ "include": "#body" }],
+  "repository": {
+    "body": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#block" },
+        { "include": "#attribute" },
+        { "include": "#expressions" }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.number-sign.hcl", "match": "#.*$" },
+        { "name": "comment.line.double-slash.hcl", "match": "//.*$" },
+        { "name": "comment.block.hcl", "begin": "/\\*", "end": "\\*/" }
+      ]
+    },
+    "block": {
+      "begin": "^\\s*(circuit|step|handler|rescue|always|prereq|ssh|lifecycle)\\b|^\\s*([A-Za-z_][A-Za-z0-9_-]*)(?=(\\s+(\"[^\"]*\"|[A-Za-z_][A-Za-z0-9_-]*))*\\s*\\{)",
+      "beginCaptures": {
+        "1": { "name": "keyword.control.conn3x" },
+        "2": { "name": "entity.name.type.hcl" }
+      },
+      "end": "\\{",
+      "patterns": [
+        { "name": "string.quoted.double.label.hcl", "match": "\"[^\"]*\"" },
+        { "name": "entity.name.label.hcl", "match": "[A-Za-z_][A-Za-z0-9_-]*" }
+      ]
+    },
+    "attribute": {
+      "match": "^\\s*([A-Za-z_][A-Za-z0-9_-]*)\\s*(=)(?!=)",
+      "captures": {
+        "1": { "name": "variable.other.property.hcl" },
+        "2": { "name": "keyword.operator.assignment.hcl" }
+      }
+    },
+    "expressions": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#heredoc" },
+        { "include": "#string" },
+        { "name": "constant.numeric.hcl", "match": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b" },
+        { "name": "constant.language.hcl", "match": "\\b(true|false|null)\\b" },
+        { "name": "keyword.control.hcl", "match": "\\b(for|in|if|else|endif|endfor)\\b" },
+        { "name": "variable.language.conn3x", "match": "\\b(var|local|each|item|step|handler|module|data|path|count|self|terraform)\\b(?=\\.)" },
+        {
+          "match": "\\b((?:provider::[A-Za-z0-9_]+::)?[A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
+          "captures": { "1": { "name": "support.function.hcl" } }
+        },
+        { "name": "keyword.operator.hcl", "match": "==|!=|<=|>=|&&|\\|\\||=>|[-+*/%<>!?:]" }
+      ]
+    },
+    "string": {
+      "name": "string.quoted.double.hcl",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "constant.character.escape.hcl", "match": "\\\\." },
+        { "include": "#template" }
+      ]
+    },
+    "heredoc": {
+      "name": "string.unquoted.heredoc.hcl",
+      "begin": "<<-?\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*$",
+      "end": "^\\s*\\1\\s*$",
+      "patterns": [{ "include": "#template" }]
+    },
+    "template": {
+      "name": "meta.interpolation.hcl",
+      "begin": "[$%]\\{~?",
+      "beginCaptures": { "0": { "name": "punctuation.section.interpolation.begin.hcl" } },
+      "end": "~?\\}",
+      "endCaptures": { "0": { "name": "punctuation.section.interpolation.end.hcl" } },
+      "patterns": [{ "include": "#expressions" }]
+    }
+  }
+}

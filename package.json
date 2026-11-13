@@ -1,0 +1,39 @@
+{
+  "name": "conn3x",
+  "displayName": "Conn3x",
+  "description": "Syntax highlighting and step snippets for Conn3x circuit files (.circuit.hcl).",
+  "version": "0.1.0",
+  "publisher": "conn3x",
+  "license": "MPL-2.0",
+  "icon": "images/icon.png",
+  "homepage": "https://conn3x.org",
+  "repository": { "type": "git", "url": "https://github.com/conn3xorg/vscode-conn3x" },
+  "bugs": { "url": "https://github.com/conn3xorg/vscode-conn3x/issues" },
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Programming Languages", "Snippets"],
+  "keywords": ["conn3x", "circuit", "hcl", "opentofu", "ansible", "configuration management"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "conn3x-circuit",
+        "aliases": ["Conn3x circuit", "circuit"],
+        "extensions": [".circuit.hcl"],
+        "configuration": "./language-configuration.json",
+        "icon": { "light": "./images/icon.png", "dark": "./images/icon.png" }
+      }
+    ],
+    "grammars": [
+      { "language": "conn3x-circuit", "scopeName": "source.hcl.conn3x", "path": "./syntaxes/circuit.tmLanguage.json" }
+    ],
+    "snippets": [
+      { "language": "conn3x-circuit", "path": "./snippets/conn3x.json" }
+    ]
+  },
+  "scripts": {
+    "package": "vsce package",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "4.1.0"
+  }
+}

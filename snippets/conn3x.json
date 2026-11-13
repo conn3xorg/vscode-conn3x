@@ -1,0 +1,929 @@
+{
+  "circuit": {
+    "prefix": "circuit",
+    "description": "A circuit: steps run on a set of hosts over SSH.",
+    "body": [
+      "circuit \"${1:name}\" {",
+      "\thosts = {",
+      "\t\t${2:web1} = \"${3:203.0.113.10}\"",
+      "\t}",
+      "",
+      "\tssh {",
+      "\t\tuser = \"${4:root}\"",
+      "\t}",
+      "",
+      "\t$0",
+      "}"
+    ]
+  },
+  "handler": {
+    "prefix": "handler",
+    "description": "A handler: restarts or reloads a service after a step that notifies it changes.",
+    "body": [
+      "handler \"${1:restart}\" {",
+      "\tservice {",
+      "\t\tname   = \"${2:nginx}\"",
+      "\t\taction = \"${3|restart,reload|}\"",
+      "\t}",
+      "}"
+    ]
+  },
+  "rescue": {
+    "prefix": "rescue",
+    "description": "Runs on a host only when a step or handler it watches failed there.",
+    "body": [
+      "rescue \"${1:name}\" {",
+      "\twatches = [step.${2:config}]",
+      "\t$0",
+      "}"
+    ]
+  },
+  "always": {
+    "prefix": "always",
+    "description": "Runs on every host where a step or handler it watches ran, failed or not.",
+    "body": [
+      "always \"${1:name}\" {",
+      "\twatches = [step.${2:config}]",
+      "\t$0",
+      "}"
+    ]
+  },
+  "prereq": {
+    "prefix": "prereq",
+    "description": "Runs on a host before a step it's before, only when that step is about to change.",
+    "body": [
+      "prereq \"${1:name}\" {",
+      "\tbefore = [step.${2:config}]",
+      "\t$0",
+      "}"
+    ]
+  },
+  "step archive": {
+    "prefix": "step-archive",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tarchive {",
+      "\t\tcreates = ${2}",
+      "\t\tdest = ${3}",
+      "\t\tsrc = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A tar or zip file on the host, unpacked into a directory unless its creates path exists. Removing it leaves the files."
+  },
+  "step authorized_key": {
+    "prefix": "step-authorized_key",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tauthorized_key {",
+      "\t\tkey = ${2}",
+      "\t\tuser = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One public key in a user's ~/.ssh/authorized_keys."
+  },
+  "step block": {
+    "prefix": "step-block",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tblock {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Part of a text file: a block that should, or should not, be there."
+  },
+  "step command": {
+    "prefix": "step-command",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tcommand {",
+      "\t\tcommand = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A shell command, for what no module covers yet. Guards say when it has already done its job."
+  },
+  "step cron": {
+    "prefix": "step-cron",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tcron {",
+      "\t\tcommand = ${2}",
+      "\t\tname = ${3}",
+      "\t\tschedule = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A job in /etc/cron.d."
+  },
+  "step crontab": {
+    "prefix": "step-crontab",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tcrontab {",
+      "\t\tuser = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "The whole of one user's crontab, the one crontab -e edits: exactly these jobs and environment lines, and no other."
+  },
+  "step directory": {
+    "prefix": "step-directory",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tdirectory {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A directory, created with its parents."
+  },
+  "step download": {
+    "prefix": "step-download",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tdownload {",
+      "\t\tdest = ${2}",
+      "\t\tsha256 = ${3}",
+      "\t\turl = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A file downloaded on the host and kept only if its SHA-256 matches."
+  },
+  "step eos_config": {
+    "prefix": "step-eos_config",
+    "body": [
+      "step \"${1:name}\" {",
+      "\teos_config {",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. Lines of an Arista EOS switch's configuration, under a parent block such as an interface. Only the lines named here are owned; with match = \"block\" the block must hold exactly these."
+  },
+  "step eos_hostname": {
+    "prefix": "step-eos_hostname",
+    "body": [
+      "step \"${1:name}\" {",
+      "\teos_hostname {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. An Arista EOS switch's hostname. Removing this step leaves the name as it is."
+  },
+  "step eos_interface": {
+    "prefix": "step-eos_interface",
+    "body": [
+      "step \"${1:name}\" {",
+      "\teos_interface {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. The settings Conn3x owns on one interface of an Arista EOS switch: description, enabled, switchport mode and VLANs, MTU. Each one left unset is left alone, and so is every other line under the interface."
+  },
+  "step eos_user": {
+    "prefix": "step-eos_user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\teos_user {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A local account on an Arista EOS switch: its privilege, role, password and SSH key. Settings left unset are left alone. Conn3x won't demote or delete the account it logs in as."
+  },
+  "step eos_vlan": {
+    "prefix": "step-eos_vlan",
+    "body": [
+      "step \"${1:name}\" {",
+      "\teos_vlan {",
+      "\t\tvlan_id = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A VLAN on an Arista EOS switch, and its name."
+  },
+  "step file": {
+    "prefix": "step-file",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tfile {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A regular file on a host: its content, mode and ownership."
+  },
+  "step filesystem": {
+    "prefix": "step-filesystem",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tfilesystem {",
+      "\t\tdevice = ${2}",
+      "\t\ttype = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A file system on a block device, made if the device holds none."
+  },
+  "step firewalld": {
+    "prefix": "step-firewalld",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tfirewalld {",
+      "\t}",
+      "}"
+    ],
+    "description": "A service or port allowed through firewalld, now and after reboots."
+  },
+  "step git": {
+    "prefix": "step-git",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tgit {",
+      "\t\tdest = ${2}",
+      "\t\trepo = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A git checkout at a branch, tag or commit. Refresh notices when a branch moves on the remote. Removing it leaves the checkout."
+  },
+  "step group": {
+    "prefix": "step-group",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tgroup {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A local group."
+  },
+  "step hostname": {
+    "prefix": "step-hostname",
+    "body": [
+      "step \"${1:name}\" {",
+      "\thostname {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "The host's name, set now and across reboots. On cloud images, cloud-init may reset it at boot unless preserve_hostname is true."
+  },
+  "step ini": {
+    "prefix": "step-ini",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tini {",
+      "\t\toption = ${2}",
+      "\t\tpath = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One option in an INI-style file, which should or should not be there. The rest of the file stays as it is."
+  },
+  "step known_hosts": {
+    "prefix": "step-known_hosts",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tknown_hosts {",
+      "\t\thost = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A remote host's SSH key in a known_hosts file, which should or should not be there. The rest of the file stays as it is."
+  },
+  "step limit": {
+    "prefix": "step-limit",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tlimit {",
+      "\t\tdomain = ${2}",
+      "\t\titem = ${3}",
+      "\t\tpath = ${4}",
+      "\t\ttype = ${5}",
+      "\t}",
+      "}"
+    ],
+    "description": "One PAM limit in a limits.conf file, which should or should not be there. The rest of the file stays as it is."
+  },
+  "step line": {
+    "prefix": "step-line",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tline {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Part of a text file: a line that should, or should not, be there."
+  },
+  "step link": {
+    "prefix": "step-link",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tlink {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A symbolic link."
+  },
+  "step locale": {
+    "prefix": "step-locale",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tlocale {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "The host's system locale: LANG."
+  },
+  "step lvm_logical_volume": {
+    "prefix": "step-lvm_logical_volume",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tlvm_logical_volume {",
+      "\t\tname = ${2}",
+      "\t\tsize = ${3}",
+      "\t\tvg = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "An LVM logical volume, grown to its size."
+  },
+  "step lvm_volume_group": {
+    "prefix": "step-lvm_volume_group",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tlvm_volume_group {",
+      "\t\tname = ${2}",
+      "\t\tpvs = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "An LVM volume group on physical volumes."
+  },
+  "step modprobe": {
+    "prefix": "step-modprobe",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tmodprobe {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A kernel module, loaded with its parameters and kept loaded across reboots."
+  },
+  "step mount": {
+    "prefix": "step-mount",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tmount {",
+      "\t\tfstype = ${2}",
+      "\t\tpath = ${3}",
+      "\t\tsrc = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A file system in /etc/fstab, mounted now."
+  },
+  "step mysql_database": {
+    "prefix": "step-mysql_database",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tmysql_database {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A database in the MySQL or MariaDB server on the host, managed through the mysql client as root over the server's socket. Settings left unset are left as they are."
+  },
+  "step mysql_user": {
+    "prefix": "step-mysql_user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tmysql_user {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An account in the MySQL or MariaDB server on the host, such as an application's login, and its database grants, managed through the mysql client as root over the server's socket."
+  },
+  "step package": {
+    "prefix": "step-package",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpackage {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An OS package, installed with dnf on the Red Hat family and apt on Debian and Ubuntu."
+  },
+  "step package_sources": {
+    "prefix": "step-package_sources",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpackage_sources {",
+      "\t}",
+      "}"
+    ],
+    "description": "Keeps a host to the distribution's package sources, those repository steps wrote, and keep: any other file in /etc/apt/sources.list.d or /etc/yum.repos.d is moved to /var/lib/conn3x/disabled-sources."
+  },
+  "step pip": {
+    "prefix": "step-pip",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpip {",
+      "\t\tname = ${2}",
+      "\t\tvenv = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A Python package in a virtual environment, installed with the venv's own pip. A missing venv is built with python3 -m venv."
+  },
+  "step postgresql_database": {
+    "prefix": "step-postgresql_database",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpostgresql_database {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A database in the PostgreSQL server on the host, managed through psql as the postgres user. Settings left unset are left as they are."
+  },
+  "step postgresql_role": {
+    "prefix": "step-postgresql_role",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpostgresql_role {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A role in the PostgreSQL server on the host, such as an application's login, managed through psql as the postgres user."
+  },
+  "step reboot": {
+    "prefix": "step-reboot",
+    "body": [
+      "step \"${1:name}\" {",
+      "\treboot {",
+      "\t}",
+      "}"
+    ],
+    "description": "Reboots the host when created and whenever triggers change, then waits for it to come back. Removing it does nothing."
+  },
+  "step replace": {
+    "prefix": "step-replace",
+    "body": [
+      "step \"${1:name}\" {",
+      "\treplace {",
+      "\t\tpath = ${2}",
+      "\t\tregexp = ${3}",
+      "\t\treplace = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "Every match of a regexp in a file, replaced. The file must already exist."
+  },
+  "step repository": {
+    "prefix": "step-repository",
+    "body": [
+      "step \"${1:name}\" {",
+      "\trepository {",
+      "\t\tkey = ${2}",
+      "\t\tname = ${3}",
+      "\t\turl = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A package repository and its signing key: a .repo file for dnf, or a .sources file for apt, which then refreshes its package lists."
+  },
+  "step selinux_boolean": {
+    "prefix": "step-selinux_boolean",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tselinux_boolean {",
+      "\t\tname = ${2}",
+      "\t\tvalue = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "An SELinux boolean, set now and across reboots. Removing it leaves the value as it is."
+  },
+  "step selinux_fcontext": {
+    "prefix": "step-selinux_fcontext",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tselinux_fcontext {",
+      "\t\tsetype = ${2}",
+      "\t\ttarget = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A local SELinux file context rule. Conn3x relabels the files it covers after every change."
+  },
+  "step service": {
+    "prefix": "step-service",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tservice {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A systemd unit: whether it runs, and whether it starts at boot."
+  },
+  "step sysctl": {
+    "prefix": "step-sysctl",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tsysctl {",
+      "\t\tname = ${2}",
+      "\t\tvalue = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A kernel parameter, set now and kept across reboots in /etc/sysctl.d."
+  },
+  "step timer": {
+    "prefix": "step-timer",
+    "body": [
+      "step \"${1:name}\" {",
+      "\ttimer {",
+      "\t\tcommand = ${2}",
+      "\t\tname = ${3}",
+      "\t\ton_calendar = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A systemd timer that runs a command on a schedule."
+  },
+  "step timezone": {
+    "prefix": "step-timezone",
+    "body": [
+      "step \"${1:name}\" {",
+      "\ttimezone {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "The host's time zone."
+  },
+  "step tls_csr": {
+    "prefix": "step-tls_csr",
+    "body": [
+      "step \"${1:name}\" {",
+      "\ttls_csr {",
+      "\t\tcommon_name = ${2}",
+      "\t\tkey_path = ${3}",
+      "\t\tpath = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A certificate signing request for a key already on the host, such as one from tls_private_key, for your own CA to sign. Made with the host's openssl."
+  },
+  "step tls_private_key": {
+    "prefix": "step-tls_private_key",
+    "body": [
+      "step \"${1:name}\" {",
+      "\ttls_private_key {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A private key in a PEM file, generated on the host with its openssl, so the key never leaves it. Only the public key is in state."
+  },
+  "step tls_self_signed_cert": {
+    "prefix": "step-tls_self_signed_cert",
+    "body": [
+      "step \"${1:name}\" {",
+      "\ttls_self_signed_cert {",
+      "\t\tcommon_name = ${2}",
+      "\t\tkey_path = ${3}",
+      "\t\tpath = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A self-signed certificate for a key already on the host, such as one from tls_private_key, made with the host's openssl and renewed before it expires."
+  },
+  "step ufw": {
+    "prefix": "step-ufw",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tufw {",
+      "\t\taction = ${2}",
+      "\t\tport = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A ufw rule for a port. Rules take effect once ufw is enabled; allow SSH before enabling it."
+  },
+  "step user": {
+    "prefix": "step-user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tuser {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A local user account."
+  },
+  "step wait_for": {
+    "prefix": "step-wait_for",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twait_for {",
+      "\t}",
+      "}"
+    ],
+    "description": "Waits until a path exists or a TCP port is listening on the host. Refresh checks again, so a later apply waits again if it stopped."
+  },
+  "step windows_acl": {
+    "prefix": "step-windows_acl",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_acl {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Access rules on a file or folder that already exists on a Windows host. Rules are compared by SID, so names and case cause no difference. It won't follow a link. Removing the step leaves the rules as they are."
+  },
+  "step windows_ad_domain": {
+    "prefix": "step-windows_ad_domain",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_ad_domain {",
+      "\t\tdomain_name = ${2}",
+      "\t\tusername = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A new child domain in an Active Directory forest that exists, with this Windows host as its first domain controller and DNS server. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the domain; nothing is demoted."
+  },
+  "step windows_ad_domain_controller": {
+    "prefix": "step-windows_ad_domain_controller",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_ad_domain_controller {",
+      "\t\tdomain_name = ${2}",
+      "\t\tusername = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "This Windows host as another domain controller, and DNS server, in an Active Directory domain that exists. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the domain controller; nothing is demoted."
+  },
+  "step windows_ad_forest": {
+    "prefix": "step-windows_ad_forest",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_ad_forest {",
+      "\t\tdomain_name = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A new Active Directory forest, with this Windows host as its first domain controller and DNS server. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the forest; nothing is demoted."
+  },
+  "step windows_ad_group": {
+    "prefix": "step-windows_ad_group",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_ad_group {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A group in Active Directory, and who is in it, run on a domain controller. Settings left unset are left as they are."
+  },
+  "step windows_ad_ou": {
+    "prefix": "step-windows_ad_ou",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_ad_ou {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An organizational unit in Active Directory, run on a domain controller. Settings left unset are left as they are."
+  },
+  "step windows_ad_user": {
+    "prefix": "step-windows_ad_user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_ad_user {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A user in Active Directory, run on a domain controller. Settings left unset are left as they are. Groups are set with windows_ad_group."
+  },
+  "step windows_directory": {
+    "prefix": "step-windows_directory",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_directory {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A folder on a Windows host, with any missing above it. Removing the step leaves the folder."
+  },
+  "step windows_dns_client": {
+    "prefix": "step-windows_dns_client",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_dns_client {",
+      "\t\tservers = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "The DNS servers one network interface on a Windows host asks, in order. Removing the step leaves them as they are."
+  },
+  "step windows_domain_membership": {
+    "prefix": "step-windows_domain_membership",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_domain_membership {",
+      "\t\tdomain = ${2}",
+      "\t\tusername = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "This Windows host joined to an Active Directory domain as a member. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the host in the domain; nothing is unjoined."
+  },
+  "step windows_feature": {
+    "prefix": "step-windows_feature",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_feature {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A Windows Server role or feature. It never reboots: reboot_required says whether Windows wants one, and windows_reboot does it."
+  },
+  "step windows_file": {
+    "prefix": "step-windows_file",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_file {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A file on a Windows host, written byte for byte: no line ending conversion. It never writes through a link, and refuses a folder on the way that another account could change."
+  },
+  "step windows_firewall_rule": {
+    "prefix": "step-windows_firewall_rule",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_firewall_rule {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A Windows Firewall rule, found by its name."
+  },
+  "step windows_group": {
+    "prefix": "step-windows_group",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_group {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A local group on a Windows host, and who is in it. Settings left unset are left as they are."
+  },
+  "step windows_iis_app_pool": {
+    "prefix": "step-windows_iis_app_pool",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_iis_app_pool {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An IIS application pool, found by its name."
+  },
+  "step windows_iis_site": {
+    "prefix": "step-windows_iis_site",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_iis_site {",
+      "\t\tname = ${2}",
+      "\t\tphysical_path = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "An IIS site, found by its name."
+  },
+  "step windows_package": {
+    "prefix": "step-windows_package",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_package {",
+      "\t\tproduct_code = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An MSI package on a Windows host, found by its product code. It never reboots: reboot_required says whether Windows wants one, and windows_reboot with only_if_pending does it."
+  },
+  "step windows_powershell": {
+    "prefix": "step-windows_powershell",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_powershell {",
+      "\t\tscript = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A PowerShell script on a Windows host, for what no module covers yet. Guards say when it has already done its job."
+  },
+  "step windows_reboot": {
+    "prefix": "step-windows_reboot",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_reboot {",
+      "\t}",
+      "}"
+    ],
+    "description": "Reboots a Windows host when created and whenever triggers change, then waits for it to come back. With only_if_pending it reboots only when Windows is waiting for one. Removing it does nothing."
+  },
+  "step windows_registry_value": {
+    "prefix": "step-windows_registry_value",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_registry_value {",
+      "\t\tkey = ${2}",
+      "\t\ttype = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One registry value under HKLM on a Windows host. The value's type and data are compared with what's there, without expanding environment names."
+  },
+  "step windows_scheduled_task": {
+    "prefix": "step-windows_scheduled_task",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_scheduled_task {",
+      "\t\texecute = ${2}",
+      "\t\tname = ${3}",
+      "\t\tuser = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A scheduled task on a Windows host that runs one program."
+  },
+  "step windows_service": {
+    "prefix": "step-windows_service",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_service {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A service that already exists on a Windows host: how it starts and whether it's running. Removing the step leaves it as it is."
+  },
+  "step windows_update": {
+    "prefix": "step-windows_update",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_update {",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. The Windows updates a host should have installed, such as this month's security updates. It never reboots: reboot_required says whether Windows wants one, and windows_reboot does it."
+  },
+  "step windows_user": {
+    "prefix": "step-windows_user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_user {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A local user on a Windows host. Settings left unset are left as they are."
+  },
+  "step windows_wait_for": {
+    "prefix": "step-windows_wait_for",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_wait_for {",
+      "\t}",
+      "}"
+    ],
+    "description": "Waits until a path exists, a service is running or a TCP port is listening on a Windows host. Refresh checks again, so a later apply waits again if it stopped."
+  }
+}
