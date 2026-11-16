@@ -17,7 +17,7 @@
       {
         "id": "conn3x-circuit",
         "aliases": ["Conn3x circuit", "circuit"],
-        "extensions": [".circuit.hcl"],
+        "extensions": [".circuit.hcl", ".task.hcl", ".plan.hcl"],
         "configuration": "./language-configuration.json",
         "icon": { "light": "./images/icon.png", "dark": "./images/icon.png" }
       }

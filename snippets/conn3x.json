@@ -58,6 +58,53 @@
       "}"
     ]
   },
+  "task": {
+    "prefix": "task",
+    "description": "A task file for conn3x run -task: steps each host runs in order, with params set from the command line.",
+    "body": [
+      "task \"${1:name}\" {",
+      "\tparam \"${2:version}\" {}",
+      "",
+      "\t$0",
+      "}"
+    ]
+  },
+  "plan": {
+    "prefix": "plan",
+    "description": "A plan file for conn3x run -plan: tasks run one after another on the hosts each names.",
+    "body": [
+      "plan \"${1:name}\" {",
+      "\tparam \"${2:version}\" {}",
+      "",
+      "\trun \"${3:deploy}\" {",
+      "\t\ttask   = \"${4:tasks/deploy.task.hcl}\"",
+      "\t\thosts  = \"${5:web}\"",
+      "\t\tparams = { ${2:version} = param.${2:version} }",
+      "\t}",
+      "}"
+    ]
+  },
+  "param": {
+    "prefix": "param",
+    "description": "A param of a task or plan, set with -a name=value; with a default it is optional.",
+    "body": [
+      "param \"${1:name}\" {",
+      "\tdefault = ${2}",
+      "}"
+    ]
+  },
+  "step acl": {
+    "prefix": "step-acl",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tacl {",
+      "\t\tetype = ${2}",
+      "\t\tpath = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One POSIX ACL entry on a file or directory, such as read access for one more user, kept with getfacl and setfacl. Other entries are left as they are."
+  },
   "step archive": {
     "prefix": "step-archive",
     "body": [
@@ -105,6 +152,18 @@
     ],
     "description": "A shell command, for what no module covers yet. Guards say when it has already done its job."
   },
+  "step container": {
+    "prefix": "step-container",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tcontainer {",
+      "\t\timage = ${2}",
+      "\t\tname = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A container kept running with Docker or Podman."
+  },
   "step cron": {
     "prefix": "step-cron",
     "body": [
@@ -139,6 +198,18 @@
       "}"
     ],
     "description": "A directory, created with its parents."
+  },
+  "step directory_copy": {
+    "prefix": "step-directory_copy",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tdirectory_copy {",
+      "\t\tdestination = ${2}",
+      "\t\tsource = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A directory copied from the machine Conn3x runs on to the host, file by file. Only files whose content, mode or owner differ are written, and the plan names them."
   },
   "step download": {
     "prefix": "step-download",
@@ -286,6 +357,98 @@
     ],
     "description": "One option in an INI-style file, which should or should not be there. The rest of the file stays as it is."
   },
+  "step ios_config": {
+    "prefix": "step-ios_config",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tios_config {",
+      "\t\tlines = [${2}]",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. Lines of a Cisco IOS XE device's running configuration, under parent blocks or at the top level. Only the lines named here are owned; with match = \"block\" the block must be exactly these."
+  },
+  "step json_value": {
+    "prefix": "step-json_value",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjson_value {",
+      "\t\tkey = ${2}",
+      "\t\tpath = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One value in a JSON file, which should or should not be there. The rest of the file stays as it was, byte for byte."
+  },
+  "step junos_config": {
+    "prefix": "step-junos_config",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjunos_config {",
+      "\t\tlines = [${2}]",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. Statements of a Juniper Junos device's configuration, as set lines. Only the lines named here are owned; with match = \"block\" the statements under prefix must be exactly these."
+  },
+  "step junos_hostname": {
+    "prefix": "step-junos_hostname",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjunos_hostname {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A Juniper Junos device's host name. Removing this step leaves the name as it is."
+  },
+  "step junos_interface": {
+    "prefix": "step-junos_interface",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjunos_interface {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. The settings Conn3x owns on one interface of a Juniper Junos device: description, enabled, MTU, and on an ELS switch port the interface-mode and VLAN members. Each one left unset is left alone, and so is every other statement under the interface."
+  },
+  "step junos_static_route": {
+    "prefix": "step-junos_static_route",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjunos_static_route {",
+      "\t\tnext_hops = ${2}",
+      "\t\tprefix = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. One static route on a Juniper Junos device, owned whole: its next hops are exactly these, and anything else under the route, such as discard, is deleted."
+  },
+  "step junos_user": {
+    "prefix": "step-junos_user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjunos_user {",
+      "\t\tclass = ${2}",
+      "\t\tname = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A local account on a Juniper Junos device: its login class, password and SSH keys. Conn3x won't demote or delete the account it logs in as."
+  },
+  "step junos_vlan": {
+    "prefix": "step-junos_vlan",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tjunos_vlan {",
+      "\t\tname = ${2}",
+      "\t\tvlan_id = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A VLAN on a Juniper EX or QFX switch running ELS, by name, and its ID. Interfaces and descriptions on it are left alone."
+  },
   "step known_hosts": {
     "prefix": "step-known_hosts",
     "body": [
@@ -415,6 +578,31 @@
     ],
     "description": "An account in the MySQL or MariaDB server on the host, such as an application's login, and its database grants, managed through the mysql client as root over the server's socket."
   },
+  "step nftables": {
+    "prefix": "step-nftables",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tnftables {",
+      "\t\tcontent = ${2}",
+      "\t\ttable = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One nftables table, owned whole: its chains, sets and rules, loaded in one nft transaction and again at every boot."
+  },
+  "step nm_connection": {
+    "prefix": "step-nm_connection",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tnm_connection {",
+      "\t\tifname = ${2}",
+      "\t\tname = ${3}",
+      "\t\ttype = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A NetworkManager connection profile, written as a keyfile and brought up."
+  },
   "step package": {
     "prefix": "step-package",
     "body": [
@@ -426,6 +614,17 @@
     ],
     "description": "An OS package, installed with dnf on the Red Hat family and apt on Debian and Ubuntu."
   },
+  "step package_hold": {
+    "prefix": "step-package_hold",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpackage_hold {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Holds a package back from updates, or releases it: apt-mark hold on Debian and Ubuntu, dnf versionlock on the Red Hat family. It doesn't install the package."
+  },
   "step package_sources": {
     "prefix": "step-package_sources",
     "body": [
@@ -435,6 +634,20 @@
       "}"
     ],
     "description": "Keeps a host to the distribution's package sources, those repository steps wrote, and keep: any other file in /etc/apt/sources.list.d or /etc/yum.repos.d is moved to /var/lib/conn3x/disabled-sources."
+  },
+  "step partition": {
+    "prefix": "step-partition",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tpartition {",
+      "\t\tdevice = ${2}",
+      "\t\tend = ${3}",
+      "\t\tnumber = ${4}",
+      "\t\tstart = ${5}",
+      "\t}",
+      "}"
+    ],
+    "description": "One partition on a disk, made with parted, with a partition table on a disk that has none. It never shrinks, moves or deletes a partition, and never relabels a disk."
   },
   "step pip": {
     "prefix": "step-pip",
@@ -530,6 +743,17 @@
     ],
     "description": "A local SELinux file context rule. Conn3x relabels the files it covers after every change."
   },
+  "step selinux_mode": {
+    "prefix": "step-selinux_mode",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tselinux_mode {",
+      "\t\tmode = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "The host's SELinux mode, enforcing or permissive, in /etc/selinux/config and, while SELinux is on, now. Removing it leaves the mode as it is."
+  },
   "step service": {
     "prefix": "step-service",
     "body": [
@@ -540,6 +764,40 @@
       "}"
     ],
     "description": "A systemd unit: whether it runs, and whether it starts at boot."
+  },
+  "step ssh_keypair": {
+    "prefix": "step-ssh_keypair",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tssh_keypair {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An SSH key made on the host with its ssh-keygen, so the private key never leaves it. Only the public key is in state."
+  },
+  "step sudoers": {
+    "prefix": "step-sudoers",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tsudoers {",
+      "\t\tcommands = ${2}",
+      "\t\tname = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A sudo rule in its own file in /etc/sudoers.d, checked with visudo before it's written."
+  },
+  "step swap": {
+    "prefix": "step-swap",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tswap {",
+      "\t\tpath = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Swap space, a file Conn3x makes or a device that's already swap, on now and in /etc/fstab."
   },
   "step sysctl": {
     "prefix": "step-sysctl",
@@ -552,6 +810,18 @@
       "}"
     ],
     "description": "A kernel parameter, set now and kept across reboots in /etc/sysctl.d."
+  },
+  "step template": {
+    "prefix": "step-template",
+    "body": [
+      "step \"${1:name}\" {",
+      "\ttemplate {",
+      "\t\tsource      = \"\\${path.module}/${2:file}.tftpl\"",
+      "\t\tdestination = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "A file rendered from a template on your machine, then written to the host."
   },
   "step timer": {
     "prefix": "step-timer",
@@ -626,6 +896,17 @@
     ],
     "description": "A ufw rule for a port. Rules take effect once ufw is enabled; allow SSH before enabling it."
   },
+  "step uri": {
+    "prefix": "step-uri",
+    "body": [
+      "step \"${1:name}\" {",
+      "\turi {",
+      "\t\turl = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Makes one HTTP call from the host when the step is first applied, and again whenever its arguments or triggers change, such as registering the host with a load balancer after a deploy. A refresh doesn't call it."
+  },
   "step user": {
     "prefix": "step-user",
     "body": [
@@ -636,6 +917,62 @@
       "}"
     ],
     "description": "A local user account."
+  },
+  "step vyos_config": {
+    "prefix": "step-vyos_config",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tvyos_config {",
+      "\t\tlines = [${2}]",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. Statements of a VyOS router's configuration, as set lines. Only the lines named here are owned; with match = \"block\" the statements under prefix must be exactly these."
+  },
+  "step vyos_hostname": {
+    "prefix": "step-vyos_hostname",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tvyos_hostname {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A VyOS router's host name. Removing this step leaves the name as it is."
+  },
+  "step vyos_interface": {
+    "prefix": "step-vyos_interface",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tvyos_interface {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. The settings Conn3x owns on one VyOS interface: description, addresses, enabled and MTU. Each one left unset is left alone, and so is every other statement under the interface."
+  },
+  "step vyos_static_route": {
+    "prefix": "step-vyos_static_route",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tvyos_static_route {",
+      "\t\tnext_hops = ${2}",
+      "\t\tprefix = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. One static route on a VyOS router, owned whole: its next hops are exactly these, and anything else under the route is deleted."
+  },
+  "step vyos_user": {
+    "prefix": "step-vyos_user",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tvyos_user {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A local account on a VyOS router: its full name, password and SSH keys. Every VyOS account can configure the router. Conn3x won't delete the account it logs in as, or take all its keys away."
   },
   "step wait_for": {
     "prefix": "step-wait_for",
@@ -726,6 +1063,18 @@
     ],
     "description": "A user in Active Directory, run on a domain controller. Settings left unset are left as they are. Groups are set with windows_ad_group."
   },
+  "step windows_certificate": {
+    "prefix": "step-windows_certificate",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_certificate {",
+      "\t\tpath = ${2}",
+      "\t\tstore_name = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. A certificate file on a Windows host, imported into a certificate store: a CA's .cer into Root, or a server's .pfx, with its private key, into My for IIS."
+  },
   "step windows_directory": {
     "prefix": "step-windows_directory",
     "body": [
@@ -748,6 +1097,20 @@
     ],
     "description": "The DNS servers one network interface on a Windows host asks, in order. Removing the step leaves them as they are."
   },
+  "step windows_dns_record": {
+    "prefix": "step-windows_dns_record",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_dns_record {",
+      "\t\tname = ${2}",
+      "\t\ttype = ${3}",
+      "\t\tvalues = ${4}",
+      "\t\tzone = ${5}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. One name's DNS records of one type, in a zone on a Windows DNS server such as a domain controller, owned as a set."
+  },
   "step windows_domain_membership": {
     "prefix": "step-windows_domain_membership",
     "body": [
@@ -759,6 +1122,17 @@
       "}"
     ],
     "description": "This Windows host joined to an Active Directory domain as a member. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the host in the domain; nothing is unjoined."
+  },
+  "step windows_environment": {
+    "prefix": "step-windows_environment",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_environment {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. One environment variable on a Windows host, the machine's or the login user's, as the registry holds it, unexpanded. New logons see a change; programs already running keep the environment they started with."
   },
   "step windows_feature": {
     "prefix": "step-windows_feature",
@@ -838,6 +1212,17 @@
     ],
     "description": "An MSI package on a Windows host, found by its product code. It never reboots: reboot_required says whether Windows wants one, and windows_reboot with only_if_pending does it."
   },
+  "step windows_path": {
+    "prefix": "step-windows_path",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_path {",
+      "\t\telement = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. One folder in a Windows host's Path, the machine's or the login user's. The other folders and their order stay as they are. New logons see a change; programs already running keep the Path they started with."
+  },
   "step windows_powershell": {
     "prefix": "step-windows_powershell",
     "body": [
@@ -895,6 +1280,18 @@
     ],
     "description": "A service that already exists on a Windows host: how it starts and whether it's running. Removing the step leaves it as it is."
   },
+  "step windows_share": {
+    "prefix": "step-windows_share",
+    "body": [
+      "step \"${1:name}\" {",
+      "\twindows_share {",
+      "\t\tname = ${2}",
+      "\t\tpath = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Experimental. An SMB share on a Windows host, and who may use it. Access changes in place, never by recreating the share. Deny entries are left alone."
+  },
   "step windows_update": {
     "prefix": "step-windows_update",
     "body": [
@@ -925,5 +1322,17 @@
       "}"
     ],
     "description": "Waits until a path exists, a service is running or a TCP port is listening on a Windows host. Refresh checks again, so a later apply waits again if it stopped."
+  },
+  "step xml_value": {
+    "prefix": "step-xml_value",
+    "body": [
+      "step \"${1:name}\" {",
+      "\txml_value {",
+      "\t\tpath = ${2}",
+      "\t\txpath = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "One element's text or one attribute in an XML file, which should or should not be there. The rest of the file stays as it was, byte for byte."
   }
 }

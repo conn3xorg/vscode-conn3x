@@ -3,7 +3,7 @@
 Write [Conn3x](https://conn3x.org) circuits with the editor doing its share. Open a `.circuit.hcl` file and you get:
 
 - **Syntax highlighting** for circuits, steps, handlers, `rescue`, `always` and `prereq` blocks, references such as `var.`, `each.` and `step.`, provider functions, and the `${ }` and `%{ }` templates inside strings.
-- **Snippets** for every step module. Type `step-` and pick one, such as `step-package` or `step-firewalld`. You get the step with its required arguments in place, and you tab through them. `circuit`, `handler`, `rescue`, `always` and `prereq` have snippets too.
+- **Snippets** for every step module. Type `step-` and pick one, such as `step-package` or `step-firewalld`. You get the step with its required arguments in place, and you tab through them. `circuit`, `handler`, `rescue`, `always` and `prereq` have snippets too, and so do `task`, `plan` and `param` for the `.task.hcl` and `.plan.hcl` files `conn3x run` reads.
 - **Comment toggling, bracket matching and indentation** that know HCL.
 
 ```hcl
