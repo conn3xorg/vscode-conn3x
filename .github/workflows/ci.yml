@@ -20,4 +20,7 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm test
+        env:
+          CONN3X_MODULES_CHECK: '1'
+          GITHUB_TOKEN: ${{ github.token }}
       - run: npx vsce package --no-dependencies
