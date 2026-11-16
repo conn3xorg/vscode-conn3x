@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
+- Snippets for `alternatives`, `debconf`, `flatpak`, `npm` and `snap`, new in Conn3x v0.21.0.
 - Snippets for the 32 step modules added since 0.1.0, through Conn3x v0.20.0, such as `nftables`, `partition`, `swap`, `ios_config` and the Junos and VyOS steps.
 - `.task.hcl` and `.plan.hcl` files open as circuits, with `task`, `plan` and `param` snippets.
 - CI fails when a module documented on docs.conn3x.org has no snippet.

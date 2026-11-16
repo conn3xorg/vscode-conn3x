@@ -2,7 +2,7 @@
   "name": "conn3x",
   "displayName": "Conn3x",
   "description": "Syntax highlighting and step snippets for Conn3x circuit files (.circuit.hcl).",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "conn3x",
   "license": "MPL-2.0",
   "icon": "images/icon.png",

@@ -105,6 +105,18 @@
     ],
     "description": "One POSIX ACL entry on a file or directory, such as read access for one more user, kept with getfacl and setfacl. Other entries are left as they are."
   },
+  "step alternatives": {
+    "prefix": "step-alternatives",
+    "body": [
+      "step \"${1:name}\" {",
+      "\talternatives {",
+      "\t\tname = ${2}",
+      "\t\tpath = ${3}",
+      "\t}",
+      "}"
+    ],
+    "description": "Which program a generic name such as editor or python3 runs, through update-alternatives on the Debian family and alternatives on the Red Hat family."
+  },
   "step archive": {
     "prefix": "step-archive",
     "body": [
@@ -187,6 +199,19 @@
       "}"
     ],
     "description": "The whole of one user's crontab, the one crontab -e edits: exactly these jobs and environment lines, and no other."
+  },
+  "step debconf": {
+    "prefix": "step-debconf",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tdebconf {",
+      "\t\tname = ${2}",
+      "\t\tquestion = ${3}",
+      "\t\tvtype = ${4}",
+      "\t}",
+      "}"
+    ],
+    "description": "A preset answer to a question a Debian or Ubuntu package asks when it installs, such as postfix's mailer type, so apt installs it without a prompt. Removing it leaves the answer as it is."
   },
   "step directory": {
     "prefix": "step-directory",
@@ -310,6 +335,17 @@
       "}"
     ],
     "description": "A service or port allowed through firewalld, now and after reboots."
+  },
+  "step flatpak": {
+    "prefix": "step-flatpak",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tflatpak {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "An application or runtime from a Flatpak remote such as Flathub, in the system installation or the connecting user's."
   },
   "step git": {
     "prefix": "step-git",
@@ -603,6 +639,17 @@
     ],
     "description": "A NetworkManager connection profile, written as a keyfile and brought up."
   },
+  "step npm": {
+    "prefix": "step-npm",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tnpm {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A Node.js package, installed with the host's npm: a global CLI, or one dependency of a project directory."
+  },
   "step package": {
     "prefix": "step-package",
     "body": [
@@ -764,6 +811,17 @@
       "}"
     ],
     "description": "A systemd unit: whether it runs, and whether it starts at boot."
+  },
+  "step snap": {
+    "prefix": "step-snap",
+    "body": [
+      "step \"${1:name}\" {",
+      "\tsnap {",
+      "\t\tname = ${2}",
+      "\t}",
+      "}"
+    ],
+    "description": "A snap, installed through snapd and kept on a channel."
   },
   "step ssh_keypair": {
     "prefix": "step-ssh_keypair",
