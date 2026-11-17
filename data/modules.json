@@ -1,0 +1,5050 @@
+{
+ "version": "v0.23.0",
+ "modules": {
+  "acl": {
+   "description": "One POSIX ACL entry on a file or directory, such as read access for one more user, kept with getfacl and setfacl. Other entries are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/acl/",
+   "args": {
+    "default": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true sets the directory's default ACL, which files made in it later inherit, instead of its own."
+    },
+    "entity": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The user or group the entry is for, by name or number. Required for user and group, not set for mask and other. The owner's and the owning group's own entries are the mode, set with a file or directory step."
+    },
+    "etype": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "\"user\", \"group\", \"mask\" or \"other\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the entry, \"delete\" takes a user or group entry out."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The file or directory, absolute. It must exist."
+    },
+    "permissions": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Any of r, w and x, such as \"rx\". Unset or \"\" is none, which still gives the entry, so it can take away what the group or other entry would give."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\", to take a user or group entry out."
+    }
+   },
+   "blocks": {}
+  },
+  "alternatives": {
+   "description": "Which program a generic name such as editor or python3 runs, through update-alternatives on the Debian family and alternatives on the Red Hat family.",
+   "doc": "https://docs.conn3x.org/modules/alternatives/",
+   "args": {
+    "link": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The generic link, such as /usr/bin/editor. Needed to register a name the host doesn't know yet, and on the Red Hat family to register a new path."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The generic name, such as editor, java or python."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the choice, \"delete\" removes path from the name's choices."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The program the name should run, such as /usr/bin/vim.basic."
+    },
+    "priority": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "Priority path is registered with; higher wins in auto mode. Defaults to 50. Set it to change a registered path's priority."
+    }
+   },
+   "blocks": {}
+  },
+  "archive": {
+   "description": "A tar or zip file on the host, unpacked into a directory unless its creates path exists. Removing it leaves the files.",
+   "doc": "https://docs.conn3x.org/modules/archive/",
+   "args": {
+    "creates": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "A path the archive creates. While it exists, nothing is unpacked."
+    },
+    "dest": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Directory to unpack into."
+    },
+    "src": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the archive on the host, such as a download's dest."
+    }
+   },
+   "blocks": {}
+  },
+  "authorized_key": {
+   "description": "One public key in a user's ~/.ssh/authorized_keys.",
+   "doc": "https://docs.conn3x.org/modules/authorized_key/",
+   "args": {
+    "exclusive": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true makes the user's authorized_keys exactly the keys in key: any other key is removed, and the plan says how many. Conn3x refuses to take away the key it logs in with."
+    },
+    "key": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Public key, in authorized_keys format. With exclusive, every key the user may log in with, one per line."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) removes the key, so a rotated key stops working; \"forget\" leaves it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "user": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The account the key logs in as."
+    }
+   },
+   "blocks": {}
+  },
+  "block": {
+   "description": "Part of a text file: a block that should, or should not, be there.",
+   "doc": "https://docs.conn3x.org/modules/block/",
+   "args": {
+    "content": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Lines of the block."
+    },
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "insert_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Where a new block goes: after the last match of this regexp, or \"EOF\" (default)."
+    },
+    "insert_before": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Where a new block goes: before the first match of this regexp, or \"BOF\"."
+    },
+    "marker": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Marker line with {mark}, which becomes BEGIN and END. Defaults to \"# {mark} CONN3X MANAGED BLOCK\"."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    }
+   },
+   "blocks": {}
+  },
+  "command": {
+   "description": "A shell command, for what no module covers yet. Guards say when it has already done its job.",
+   "doc": "https://docs.conn3x.org/modules/command/",
+   "args": {
+    "command": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Shell command, run with /bin/sh."
+    },
+    "creates": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Skip the command while this path exists."
+    },
+    "removes": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Skip the command while this path is missing."
+    },
+    "stdin_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Text the command reads on standard input, kept out of state: state records only stdin_hmac, and the text is blanked from output and errors. Use it for secrets, which a command line would show in the host's process list."
+    },
+    "triggers": {
+     "type": "dynamic",
+     "required": false,
+     "writeOnly": false,
+     "description": "Any value; the command runs again whenever it changes."
+    },
+    "unless": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Skip the command while this check command succeeds. It never gets stdin_wo, which a plan doesn't have."
+    }
+   },
+   "blocks": {}
+  },
+  "container": {
+   "description": "A container kept running with Docker or Podman.",
+   "doc": "https://docs.conn3x.org/modules/container/",
+   "args": {
+    "command": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The command to run instead of the image's own, one argument per entry."
+    },
+    "engine": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"docker\" or \"podman\". Unset, Conn3x uses Docker if it's installed, and Podman otherwise."
+    },
+    "env": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Environment variables. Passed on standard input, not the command line, so they don't show in the host's process list. Only the ones you set are compared."
+    },
+    "image": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The image, such as docker.io/library/nginx:1.27. Write it in full: a new tag recreates the container, and a new digest behind the same tag doesn't."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The container's name."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the container running, \"delete\" removes it. Its volumes stay either way."
+    },
+    "ports": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Published ports, each host:container, such as 8080:80, optionally with an address in front and /tcp, /udp or /sctp after."
+    },
+    "restart": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Restart policy: \"no\" (default), \"always\", \"unless-stopped\" or \"on-failure\". With Podman, always and unless-stopped also enable podman-restart.service, so the container starts after a reboot."
+    },
+    "volumes": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Mounts, each source:destination[:options], with an absolute host path or a volume name as the source. Options are ro, rw, z and Z."
+    }
+   },
+   "blocks": {}
+  },
+  "cron": {
+   "description": "A job in /etc/cron.d.",
+   "doc": "https://docs.conn3x.org/modules/cron/",
+   "args": {
+    "command": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Command to run."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "File name in /etc/cron.d: letters, digits, - and _."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) removes the job, \"forget\" leaves it."
+    },
+    "schedule": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Five cron fields, or a macro such as @daily."
+    },
+    "user": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "User the job runs as. Defaults to root."
+    }
+   },
+   "blocks": {}
+  },
+  "crontab": {
+   "description": "The whole of one user's crontab, the one crontab -e edits: exactly these jobs and environment lines, and no other.",
+   "doc": "https://docs.conn3x.org/modules/crontab/",
+   "args": {
+    "env": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Environment lines at the top of the crontab, such as MAILTO or PATH."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the crontab as it is when the step is removed; \"delete\" removes the user's whole crontab."
+    },
+    "user": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The user whose crontab this is. The jobs run as them."
+    }
+   },
+   "blocks": {
+    "job": {
+     "description": "One job in the crontab.",
+     "args": {
+      "command": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "The command, one line. A % in it is kept as a %."
+      },
+      "name": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "A name for the job, written in a comment above it: letters, digits, - and _."
+      },
+      "schedule": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "When it runs: five fields, such as \"0 3 * * *\", or a macro such as \"@daily\"."
+      }
+     },
+     "blocks": {}
+    }
+   }
+  },
+  "debconf": {
+   "description": "A preset answer to a question a Debian or Ubuntu package asks when it installs, such as postfix's mailer type, so apt installs it without a prompt. Removing it leaves the answer as it is.",
+   "doc": "https://docs.conn3x.org/modules/debconf/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Package that owns the question, such as postfix."
+    },
+    "question": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The question, such as postfix/main_mailer_type. debconf-show <package> on a host that has the package lists them with their answers."
+    },
+    "value": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The answer, as debconf-set-selections takes it: true or false for a boolean, the choices separated by \", \" for a multiselect. State keeps it, so put a password in value_wo. Set exactly one of value and value_wo."
+    },
+    "value_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: the answer, kept out of plan and state, for a password question. State records only value_hmac. debconf-show hides a password, so a refresh asks debconf itself for the answer the host has and compares its HMAC, which is how a password changed on the host shows as drift."
+    },
+    "vtype": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The question's type, as the package's templates declare it: boolean, select, multiselect, string, password, text, note, title or error."
+    }
+   },
+   "blocks": {}
+  },
+  "directory": {
+   "description": "A directory, created with its parents.",
+   "doc": "https://docs.conn3x.org/modules/directory/",
+   "args": {
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owning group. Left as is when unset."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Octal permissions. Defaults to \"0755\". With recurse, a symbolic mode such as \"u=rwX,g=rX,o=\", for the directory and everything under it."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the directory, \"delete\" removes it when it is empty."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owning user. Left as is when unset."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path."
+    },
+    "recurse": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Sets owner, group and a symbolic mode on everything under the directory too, without following links or crossing into another filesystem."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\", which removes the directory when it is empty and keeps it gone."
+    }
+   },
+   "blocks": {}
+  },
+  "directory_copy": {
+   "description": "A directory copied from the machine Conn3x runs on to the host, file by file. Only files whose content, mode or owner differ are written, and the plan names them.",
+   "doc": "https://docs.conn3x.org/modules/directory_copy/",
+   "args": {
+    "delete": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true removes files under destination that the source doesn't have, as rsync --delete does. Off by default, so files put there by something else stay."
+    },
+    "destination": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The directory on the host, absolute, such as /var/www/site. Missing directories are made."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Every file's group. Unset leaves it as it is."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Every file's mode, such as \"0644\" (the default)."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens when this resource is removed: \"forget\" (default) leaves the files, \"delete\" removes the ones the source has."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Every file's owner. Unset leaves each file's owner as it is, or root's for a new one."
+    },
+    "source": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The directory to copy, on the machine Conn3x runs on, such as \"${path.module}/site\". Regular files only: a link or a special file in it is an error."
+    }
+   },
+   "blocks": {}
+  },
+  "download": {
+   "description": "A file downloaded on the host and kept only if its SHA-256 matches.",
+   "doc": "https://docs.conn3x.org/modules/download/",
+   "args": {
+    "dest": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path to save it to."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Octal permissions. Defaults to \"0644\"."
+    },
+    "netrc_file": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Absolute path of a netrc file on the host with the login for the URL's server. Needs curl on the host."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file, \"delete\" removes it."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owner."
+    },
+    "sha256": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Expected SHA-256, in lowercase hex."
+    },
+    "url": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "http or https URL, without a user name or password."
+    }
+   },
+   "blocks": {}
+  },
+  "eos_config": {
+   "description": "Experimental. Lines of an Arista EOS switch's configuration, under a parent block such as an interface. Only the lines named here are owned; with match = \"block\" the block must hold exactly these.",
+   "doc": "https://docs.conn3x.org/modules/eos_config/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "lines": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The lines, as show running-config prints them, without the indent. The switch must print a line back exactly as written, or it never shows as in sync. State keeps them, so put lines holding a secret in lines_wo."
+    },
+    "lines_wo": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: lines that hold a secret, such as \"tacacs-server key MyKey\" or \"ntp authentication-key 2 sha1 MyKey\", never kept in state. The switch shows these hashed or encrypted, so each is matched by its start, the line up to its secret (\"tacacs-server key\", \"ntp authentication-key 2\"): it owns every line under the parent that starts that way, and is in sync when one is there. snmp-server community lines are refused, since the community is its own name; use an SNMPv3 user. A change to any of them sends them all again."
+    },
+    "match": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"lines\" (default): these lines must be there, and others under the parent are left alone. \"block\": the block must be exactly these lines, so others under it are removed. Needs parents."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the switch when this resource is removed: \"forget\" (default) leaves the lines, \"delete\" removes them with \"no\" and leaves the parent."
+    },
+    "parents": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The block the lines go under, outermost first, as show running-config prints it, such as [\"interface Ethernet1\"] or [\"router bgp 65000\", \"address-family ipv4\"]. Leave unset for top-level lines."
+    }
+   },
+   "blocks": {}
+  },
+  "eos_hostname": {
+   "description": "Experimental. An Arista EOS switch's hostname. Removing this step leaves the name as it is.",
+   "doc": "https://docs.conn3x.org/modules/eos_hostname/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Hostname, such as leaf1. EOS takes letters, digits, hyphens and dots."
+    }
+   },
+   "blocks": {}
+  },
+  "eos_interface": {
+   "description": "Experimental. The settings Conn3x owns on one interface of an Arista EOS switch: description, enabled, switchport mode and VLANs, MTU. Each one left unset is left alone, and so is every other line under the interface.",
+   "doc": "https://docs.conn3x.org/modules/eos_interface/",
+   "args": {
+    "access_vlan": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "The VLAN of an access port, 1 to 4094."
+    },
+    "allowed_vlans": {
+     "type": "list(number)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The VLANs a trunk carries. Conn3x writes them the way EOS prints them, as in 10,20-22."
+    },
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its description."
+    },
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "false shuts it down, true brings it up. Shutting down the interface whose address Conn3x connects to is refused."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"access\" or \"trunk\". Ethernet and Port-Channel interfaces only."
+    },
+    "mtu": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "MTU, 68 to 9214."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The interface, as running-config names it, such as Ethernet1, Ethernet1/1, Port-Channel10, Vlan20 or Loopback0."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens when this resource is removed: \"forget\" (default) leaves the interface as it is, \"delete\" takes the settings it owns back to EOS's defaults. The interface itself stays."
+    }
+   },
+   "blocks": {}
+  },
+  "eos_user": {
+   "description": "Experimental. A local account on an Arista EOS switch: its privilege, role, password and SSH key. Settings left unset are left alone. Conn3x won't demote or delete the account it logs in as.",
+   "doc": "https://docs.conn3x.org/modules/eos_user/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The user name."
+    },
+    "nopassword": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true lets the account log in with no password at all (nopassword), wherever the switch takes password logins. false makes sure it can't: an account that has nopassword gets a secret no password matches. Unset leaves an existing account as it is. Can't be true with password_wo."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) removes the account when the step goes, as with every step that grants access; \"forget\" leaves it."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: the password, never kept in state. Conn3x hashes it here and sends the switch the salted hash it would store anyway, so the password itself never reaches the CLI; a new value plans a change through password_hmac. Unset leaves the account's password alone, and a new account gets a secret no password matches (secret *), for SSH keys only."
+    },
+    "privilege": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "0 to 15. Conn3x's own login needs 15."
+    },
+    "role": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "A role, such as network-admin or network-operator."
+    },
+    "ssh_key": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "One public key line, such as \"ssh-ed25519 AAAA... alice@laptop\". \"\" removes the account's key."
+    }
+   },
+   "blocks": {}
+  },
+  "eos_vlan": {
+   "description": "Experimental. A VLAN on an Arista EOS switch, and its name.",
+   "doc": "https://docs.conn3x.org/modules/eos_vlan/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "VLAN name: one word, up to 32 characters. Leave unset for the switch's default, such as VLAN0010; a name set by hand is then removed."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the switch when this resource is removed: \"delete\" (default) removes the VLAN, \"forget\" leaves it."
+    },
+    "vlan_id": {
+     "type": "number",
+     "required": true,
+     "writeOnly": false,
+     "description": "VLAN ID, 1 to 4094."
+    }
+   },
+   "blocks": {}
+  },
+  "file": {
+   "description": "A regular file on a host: its content, mode and ownership.",
+   "doc": "https://docs.conn3x.org/modules/file/",
+   "args": {
+    "confirm_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a change that could lock Conn3x out, such as sshd_config: before writing, the host keeps a copy and schedules its own revert after this long, such as \"60s\"; after writing and running reload, Conn3x logs in again over a new connection and cancels it. If that login doesn't come, the host puts the old file back by itself, even if Conn3x has gone away. Needs systemd."
+    },
+    "content": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exact content of the file. Set this or content_wo, unless state is \"absent\"."
+    },
+    "content_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Exact content of the file, kept out of state: state records only content_hmac. Use it for secrets. Set this or content, unless state is \"absent\"."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owning group. Left as is when unset."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Octal permissions. Defaults to \"0644\", or \"0600\" with content_wo."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the file, \"delete\" removes it."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owning user. Left as is when unset."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file on the host."
+    },
+    "reload": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "With confirm_after: a command that makes the new file take effect, such as \"systemctl reload sshd\", run after writing and again after a revert. A reload that fails reverts at once."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\", which removes the file and keeps it gone."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks new content before it replaces the file, such as \"visudo -cf %s\". %s stands for the temporary file. Runs only when the content changes, and is kept out of state."
+    }
+   },
+   "blocks": {}
+  },
+  "filesystem": {
+   "description": "A file system on a block device, made if the device holds none.",
+   "doc": "https://docs.conn3x.org/modules/filesystem/",
+   "args": {
+    "device": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The block device, such as /dev/sdb or /dev/vg0/data."
+    },
+    "earlier_revisions": {
+     "type": "dynamic",
+     "required": false,
+     "writeOnly": false,
+     "description": "Set by the circuit when resize is set, so leave it unset: the revisions of the steps before this one. A plan that changes any of them checks the file system's size again at apply time, so a volume an earlier step grows gets its file system grown in the same apply."
+    },
+    "force": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Make the file system over whatever else the device holds, erasing it. Never over a mounted one."
+    },
+    "opts": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Extra mkfs options, one word each, such as [\"-L\", \"data\"]. Used only when the file system is made."
+    },
+    "resize": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Grow the file system to fill its device when the device grows. For ext2, ext3, ext4 and xfs; xfs grows only while mounted."
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The file system: btrfs, ext2, ext3, ext4, swap, vfat, xfs."
+    }
+   },
+   "blocks": {}
+  },
+  "firewalld": {
+   "description": "A service or port allowed through firewalld, now and after reboots.",
+   "doc": "https://docs.conn3x.org/modules/firewalld/",
+   "args": {
+    "confirm_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a rule change that could lock Conn3x out, such as removing the rule that lets SSH in, or a ufw deny on its port: before the change, the host schedules its own undo after this long, such as \"60s\"; after it, Conn3x logs in again over a new connection and cancels it. If that login doesn't come, the host takes the change back by itself, even if Conn3x has gone away. Needs systemd."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) closes the port again when the rule is removed or replaced, \"forget\" leaves it open."
+    },
+    "port": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Port and protocol, such as 8080/tcp or 60000-61000/udp. Set this or service."
+    },
+    "service": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "firewalld service name, such as http. Set this or port."
+    },
+    "zone": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Zone. Defaults to firewalld's default zone."
+    }
+   },
+   "blocks": {}
+  },
+  "flatpak": {
+   "description": "An application or runtime from a Flatpak remote such as Flathub, in the system installation or the connecting user's.",
+   "doc": "https://docs.conn3x.org/modules/flatpak/",
+   "args": {
+    "method": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"system\" (default) for every user on the host, or \"user\" for the connecting user's own installation."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Application ID, such as org.gnome.Calculator."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this step is removed: \"forget\" (default) leaves the app, \"delete\" uninstalls it."
+    },
+    "remote": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Remote to install from, which the host must already have. Defaults to flathub."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), \"latest\" or \"absent\"."
+    }
+   },
+   "blocks": {}
+  },
+  "git": {
+   "description": "A git checkout at a branch, tag or commit. Refresh notices when a branch moves on the remote. Removing it leaves the checkout.",
+   "doc": "https://docs.conn3x.org/modules/git/",
+   "args": {
+    "dest": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Directory to check it out in."
+    },
+    "ref": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Branch, tag or full commit. Defaults to the remote's default branch."
+    },
+    "repo": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Repository URL, without a user name or password. The host needs access to it. Plain http needs a full commit as ref."
+    }
+   },
+   "blocks": {}
+  },
+  "group": {
+   "description": "A local group.",
+   "doc": "https://docs.conn3x.org/modules/group/",
+   "args": {
+    "gid": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group ID."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Group name."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the group, \"delete\" removes it."
+    },
+    "system": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create as a system group."
+    }
+   },
+   "blocks": {}
+  },
+  "hostname": {
+   "description": "The host's name, set now and across reboots. On cloud images, cloud-init may reset it at boot unless preserve_hostname is true.",
+   "doc": "https://docs.conn3x.org/modules/hostname/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Hostname, such as web1 or web1.example.com."
+    }
+   },
+   "blocks": {}
+  },
+  "ini": {
+   "description": "One option in an INI-style file, which should or should not be there. The rest of the file stays as it is.",
+   "doc": "https://docs.conn3x.org/modules/ini/",
+   "args": {
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "no_extra_spaces": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Write option=value rather than option = value."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "option": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The option's name."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "section": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The section, added when it's missing. Without it, the option goes before the first section."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "uncomment": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Put the value on a commented-out line for this option, rather than keeping every comment."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    },
+    "value": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The option's value. Required unless state is \"absent\"."
+    }
+   },
+   "blocks": {}
+  },
+  "ios_config": {
+   "description": "Experimental. Lines of a Cisco IOS XE device's running configuration, under parent blocks or at the top level. Only the lines named here are owned; with match = \"block\" the block must be exactly these.",
+   "doc": "https://docs.conn3x.org/modules/ios_config/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "lines": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The lines, exactly as show running-config prints them without their indent, such as \"description uplink\". A line the device prints differently never shows as in sync."
+    },
+    "match": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"lines\" (default): these lines must be there, and others are left alone. \"block\": the block under parents must be exactly these lines, so others are removed. Needs parents."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the device when this resource is removed: \"forget\" (default) leaves the lines, \"delete\" removes them with their \"no\" form."
+    },
+    "parents": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The blocks the lines sit in, outermost first, as show running-config prints them, such as [\"interface GigabitEthernet1\"]. Unset is the top level."
+    }
+   },
+   "blocks": {}
+  },
+  "json_value": {
+   "description": "One value in a JSON file, which should or should not be there. The rest of the file stays as it was, byte for byte.",
+   "doc": "https://docs.conn3x.org/modules/json_value/",
+   "args": {
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "key": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Where the value is: object keys joined by dots, with [n] for an array element, such as server.port or upstreams[0].host. Missing objects on the way are made."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\", which takes the key out."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    },
+    "value": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The value, as JSON: write it with jsonencode, such as jsonencode(8080), jsonencode(\"info\") or jsonencode({ enabled = true }). Required unless state is \"absent\". A value that's equal already, however it's written, is left alone."
+    }
+   },
+   "blocks": {}
+  },
+  "junos_config": {
+   "description": "Experimental. Statements of a Juniper Junos device's configuration, as set lines. Only the lines named here are owned; with match = \"block\" the statements under prefix must be exactly these.",
+   "doc": "https://docs.conn3x.org/modules/junos_config/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "lines": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Set statements, exactly as show configuration | display set prints them, such as \"set interfaces ge-0/0/1 description uplink\". The device must print a line back exactly as written, or it never shows as in sync. State keeps them, so put statements holding a secret in lines_wo."
+    },
+    "lines_wo": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: set statements whose last word is a secret, such as \"set system login user ops authentication encrypted-password \\\"$6$...\\\"\", never kept in state. The device shows most secrets hashed or encrypted, so each is matched by its path, the statement without that word: it's in sync when the path holds a value. A change to any of them sets them all again."
+    },
+    "match": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"lines\" (default): these statements must be there, and others are left alone. \"block\": the statements under prefix must be exactly these, so others under it are deleted. Needs prefix."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the device when this resource is removed: \"forget\" (default) leaves the statements, \"delete\" deletes them."
+    },
+    "prefix": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "With match = \"block\": the hierarchy the lines own, such as \"interfaces ge-0/0/1\". Every line must start with set and this prefix."
+    }
+   },
+   "blocks": {}
+  },
+  "junos_hostname": {
+   "description": "Experimental. A Juniper Junos device's host name. Removing this step leaves the name as it is.",
+   "doc": "https://docs.conn3x.org/modules/junos_hostname/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Host name, such as sw1. Junos takes letters, digits, hyphens and dots."
+    }
+   },
+   "blocks": {}
+  },
+  "junos_interface": {
+   "description": "Experimental. The settings Conn3x owns on one interface of a Juniper Junos device: description, enabled, MTU, and on an ELS switch port the interface-mode and VLAN members. Each one left unset is left alone, and so is every other statement under the interface.",
+   "doc": "https://docs.conn3x.org/modules/junos_interface/",
+   "args": {
+    "access_vlan": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The VLAN of an access port, by name or ID, as vlan members."
+    },
+    "allowed_vlans": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The VLANs a trunk carries, by name, ID or range such as 20-22. Members not listed are deleted."
+    },
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its description. No double quotes or backslashes."
+    },
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "false disables it, true deletes the disable. Disabling a management interface (fxp0, em0, me0, vme), or the one whose address Conn3x connects to, is refused."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"access\" or \"trunk\": unit 0 family ethernet-switching interface-mode. Switch ports and ae interfaces only."
+    },
+    "mtu": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "MTU, 256 to 9216."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The interface, such as ge-0/0/1, xe-0/0/48, ae0, irb or lo0."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens when this resource is removed: \"forget\" (default) leaves the interface as it is, \"delete\" deletes the statements it owns. The interface itself stays."
+    }
+   },
+   "blocks": {}
+  },
+  "junos_static_route": {
+   "description": "Experimental. One static route on a Juniper Junos device, owned whole: its next hops are exactly these, and anything else under the route, such as discard, is deleted.",
+   "doc": "https://docs.conn3x.org/modules/junos_static_route/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "next_hops": {
+     "type": "list(string)",
+     "required": true,
+     "writeOnly": false,
+     "description": "The next hop addresses, of the prefix's family."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the device when this resource is removed: \"forget\" (default) leaves the route, \"delete\" deletes it."
+    },
+    "preference": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "The route's preference, 0 to 4294967295; lower wins. Unset is Junos's default for static routes."
+    },
+    "prefix": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The network, such as 10.20.0.0/16 or 2001:db8:20::/48. An IPv6 one goes in the inet6.0 table."
+    }
+   },
+   "blocks": {}
+  },
+  "junos_user": {
+   "description": "Experimental. A local account on a Juniper Junos device: its login class, password and SSH keys. Conn3x won't demote or delete the account it logs in as.",
+   "doc": "https://docs.conn3x.org/modules/junos_user/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "class": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Its login class, such as super-user, operator or read-only. Junos requires one."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The account name. Not root."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the account when the step goes, as with every step that grants access; \"forget\" leaves it."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: the password, never kept in state. Conn3x hashes it here and sends the device the salted SHA-512 hash, as encrypted-password, so the password itself never reaches the CLI; a new value plans a change through password_hmac. Unset leaves the account's password alone."
+    },
+    "ssh_keys": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The account's public keys, one line each, such as \"ssh-ed25519 AAAA... alice@laptop\". Keys not listed are deleted; [] deletes them all, and unset leaves them alone."
+    }
+   },
+   "blocks": {}
+  },
+  "junos_vlan": {
+   "description": "Experimental. A VLAN on a Juniper EX or QFX switch running ELS, by name, and its ID. Interfaces and descriptions on it are left alone.",
+   "doc": "https://docs.conn3x.org/modules/junos_vlan/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "VLAN name, as Junos keys VLANs, such as users. It starts with a letter."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the device when this resource is removed: \"delete\" (default) deletes the VLAN, everything under it included; \"forget\" leaves it."
+    },
+    "vlan_id": {
+     "type": "number",
+     "required": true,
+     "writeOnly": false,
+     "description": "VLAN ID, 1 to 4094."
+    }
+   },
+   "blocks": {}
+  },
+  "known_hosts": {
+   "description": "A remote host's SSH key in a known_hosts file, which should or should not be there. The rest of the file stays as it is.",
+   "doc": "https://docs.conn3x.org/modules/known_hosts/",
+   "args": {
+    "host": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The remote host: a lowercase name or address, or [host]:port for another port."
+    },
+    "key": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The host's public key: the type, the key and an optional comment. Required unless state is \"absent\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) removes the key, so a retired key stops being trusted; \"forget\" leaves it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), or \"absent\", which removes all of this host's keys."
+    },
+    "user": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whose ~/.ssh/known_hosts to change. Without it, the host's /etc/ssh/ssh_known_hosts, which every user trusts."
+    }
+   },
+   "blocks": {}
+  },
+  "limit": {
+   "description": "One PAM limit in a limits.conf file, which should or should not be there. The rest of the file stays as it is.",
+   "doc": "https://docs.conn3x.org/modules/limit/",
+   "args": {
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "domain": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Who the limit applies to: a user, @group, * or a range, as in limits.conf(5)."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "item": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "What is limited, such as nofile or nproc."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "\"soft\", \"hard\" or \"-\" for both."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    },
+    "value": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The limit: a number, or \"unlimited\", \"infinity\" or \"-1\". Required unless state is \"absent\"."
+    }
+   },
+   "blocks": {}
+  },
+  "line": {
+   "description": "Part of a text file: a line that should, or should not, be there.",
+   "doc": "https://docs.conn3x.org/modules/line/",
+   "args": {
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "insert_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "When adding, insert after the last line matching this regexp, or \"EOF\" (default)."
+    },
+    "insert_before": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "When adding, insert before the first line matching this regexp, or \"BOF\"."
+    },
+    "line": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The line. Required unless state is \"absent\" with a regexp."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "regexp": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Replace the last line matching this; with state \"absent\", remove every match."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    }
+   },
+   "blocks": {}
+  },
+  "link": {
+   "description": "A symbolic link.",
+   "doc": "https://docs.conn3x.org/modules/link/",
+   "args": {
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the link, \"delete\" removes it."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the link."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\", which removes the link and keeps it gone."
+    },
+    "target": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What the link points to, absolute or relative to the link. Required unless state is \"absent\"."
+    }
+   },
+   "blocks": {}
+  },
+  "locale": {
+   "description": "The host's system locale: LANG.",
+   "doc": "https://docs.conn3x.org/modules/locale/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Locale name, such as en_US.UTF-8 or C.UTF-8. A locale that isn't installed is generated where locale-gen exists; on the Red Hat family, add a package step for its glibc-langpack first."
+    }
+   },
+   "blocks": {}
+  },
+  "lvm_logical_volume": {
+   "description": "An LVM logical volume, grown to its size.",
+   "doc": "https://docs.conn3x.org/modules/lvm_logical_volume/",
+   "args": {
+    "force": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Shrink the volume when it's bigger than size, destroying whatever is past the new end, file system included."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The volume's name. Its device is /dev/<vg>/<name>."
+    },
+    "size": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Its size: 512m, 20g or 1.5t (binary units; a bare number is MiB), a share of the group such as 50%VG, or a share of its free space such as 100%FREE, which sizes the volume only when it's made."
+    },
+    "vg": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The volume group it's in."
+    }
+   },
+   "blocks": {}
+  },
+  "lvm_volume_group": {
+   "description": "An LVM volume group on physical volumes.",
+   "doc": "https://docs.conn3x.org/modules/lvm_volume_group/",
+   "args": {
+    "force": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Take in a device that holds a file system, erasing it. Never one that's mounted, or in another volume group."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The volume group's name, such as vg0."
+    },
+    "pvs": {
+     "type": "list(string)",
+     "required": true,
+     "writeOnly": false,
+     "description": "The devices in it, such as [\"/dev/sdb\"]. A device that isn't a physical volume yet becomes one. One in the group but not listed stays in it."
+    }
+   },
+   "blocks": {}
+  },
+  "modprobe": {
+   "description": "A kernel module, loaded with its parameters and kept loaded across reboots.",
+   "doc": "https://docs.conn3x.org/modules/modprobe/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The module, such as br_netfilter or wireguard."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the module loaded, \"delete\" unloads it and removes its boot files."
+    },
+    "params": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Parameters, each key=value, such as [\"numdummies=2\"]. A module loaded with other values is unloaded and loaded again."
+    },
+    "persistent": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Keep it so at boot: /etc/modules-load.d/<name>.conf loads it, and /etc/modprobe.d/<name>.conf holds its params; with state \"absent\", both are removed. Defaults to true. false leaves those files alone."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) loads the module, \"absent\" unloads it."
+    }
+   },
+   "blocks": {}
+  },
+  "mount": {
+   "description": "A file system in /etc/fstab, mounted now.",
+   "doc": "https://docs.conn3x.org/modules/mount/",
+   "args": {
+    "fstype": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "File system type, such as xfs, ext4, nfs4 or tmpfs."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves it mounted, \"delete\" unmounts it and removes the fstab entry."
+    },
+    "opts": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Mount options. Defaults to \"defaults\"."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Mount point. Created if missing."
+    },
+    "src": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Device, UUID=..., LABEL=..., host:/export, or tmpfs."
+    }
+   },
+   "blocks": {}
+  },
+  "mysql_database": {
+   "description": "A database in the MySQL or MariaDB server on the host, managed through the mysql client as root over the server's socket. Settings left unset are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/mysql_database/",
+   "args": {
+    "charset": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Default character set, such as utf8mb4. Changing it changes the default for new tables only."
+    },
+    "collation": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Default collation, such as utf8mb4_unicode_ci. Changing it changes the default for new tables only."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Database name, up to 64 characters. Renaming makes a new database; the old one stays unless on_remove is \"delete\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the database, \"delete\" drops it and everything in it."
+    }
+   },
+   "blocks": {}
+  },
+  "mysql_user": {
+   "description": "An account in the MySQL or MariaDB server on the host, such as an application's login, and its database grants, managed through the mysql client as root over the server's socket.",
+   "doc": "https://docs.conn3x.org/modules/mysql_user/",
+   "args": {
+    "grants": {
+     "type": "map(set(string))",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exactly the user's database-level privileges, by database, such as { app = [\"SELECT\", \"INSERT\"] } or { app = [\"ALL PRIVILEGES\"] }. A database not listed loses its grant. Unset leaves grants as they are; global and table grants are never changed."
+    },
+    "host": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Where the user may connect from, such as localhost (the default), 10.0.0.% or %. name and host together are the account."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "User name, up to 32 characters. Never root or one of the server's own accounts."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the user, \"delete\" drops it."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password, kept out of plan and state: state records only password_hmac. It reaches the server on the mysql client's stdin, inside the statement, so the server sees it as typed. Required for a new user. It's set when the user is made and whenever this value changes. A password changed on the server isn't detected."
+    }
+   },
+   "blocks": {}
+  },
+  "nftables": {
+   "description": "One nftables table, owned whole: its chains, sets and rules, loaded in one nft transaction and again at every boot.",
+   "doc": "https://docs.conn3x.org/modules/nftables/",
+   "args": {
+    "confirm_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a rule change that could lock Conn3x out, such as removing the rule that lets SSH in, or a ufw deny on its port: before the change, the host schedules its own undo after this long, such as \"60s\"; after it, Conn3x logs in again over a new connection and cancels it. If that login doesn't come, the host takes the change back by itself, even if Conn3x has gone away. Needs systemd."
+    },
+    "content": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The table's body in nft syntax: its chains, sets and rules, as they'd sit inside table FAMILY NAME { ... }. nft checks it with nft -c before anything is loaded."
+    },
+    "family": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The table's family: \"inet\" (default), \"ip\", \"ip6\", \"arp\", \"bridge\" or \"netdev\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the table, and the unit that loads it at boot, when the step goes; \"forget\" leaves them."
+    },
+    "table": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The table's name, such as filter or conn3x."
+    }
+   },
+   "blocks": {}
+  },
+  "nm_connection": {
+   "description": "A NetworkManager connection profile, written as a keyfile and brought up.",
+   "doc": "https://docs.conn3x.org/modules/nm_connection/",
+   "args": {
+    "autoconnect": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Bring the connection up now and at boot. Defaults to true."
+    },
+    "bond_mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a bond: balance-rr (the default), active-backup, balance-xor, broadcast, 802.3ad, balance-tlb or balance-alb."
+    },
+    "bond_options": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a bond: other bonding options, such as { miimon = \"100\" }."
+    },
+    "confirm_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Before a change, the host keeps the old keyfile and schedules its own revert after this long; after it, Conn3x logs in again over a new connection and cancels the revert. Defaults to \"60s\", since changing the connection Conn3x logs in over is the classic lockout. \"off\" turns it off. Needs systemd."
+    },
+    "controller": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a bond port: the name of the bond connection. A port has no addresses of its own."
+    },
+    "dns4": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "IPv4 DNS servers."
+    },
+    "dns6": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "IPv6 DNS servers."
+    },
+    "dns_search": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "DNS search domains."
+    },
+    "gw4": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The IPv4 gateway."
+    },
+    "gw6": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The IPv6 gateway."
+    },
+    "ifname": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The interface, such as eth1, bond0 or bond0.10."
+    },
+    "ip4": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "IPv4 addresses with prefixes, such as [\"192.0.2.10/24\"], or [\"auto\"] for DHCP (the default) or [\"disabled\"]."
+    },
+    "ip6": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "IPv6 addresses with prefixes, or [\"auto\"] (the default) or [\"disabled\"]."
+    },
+    "mtu": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "The MTU, from 576 to 65535."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The connection's name. Its keyfile is /etc/NetworkManager/system-connections/<name>.nmconnection."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the connection as it is, \"delete\" removes the profile, which takes the connection down."
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "\"ethernet\", \"bond\" or \"vlan\"."
+    },
+    "vlan_id": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a vlan: its ID, from 1 to 4094."
+    },
+    "vlan_parent": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a vlan: the parent interface."
+    }
+   },
+   "blocks": {}
+  },
+  "npm": {
+   "description": "A Node.js package, installed with the host's npm: a global CLI, or one dependency of a project directory.",
+   "doc": "https://docs.conn3x.org/modules/npm/",
+   "args": {
+    "global": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Install into npm's global prefix, for CLIs. Default false, which needs path."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Package name, such as pm2 or @angular/cli, with no version or tag."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this step is removed: \"forget\" (default) leaves the package, \"delete\" uninstalls it."
+    },
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Absolute path of the project directory, which has to exist. npm runs there and writes its package.json."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), \"latest\" or \"absent\"."
+    },
+    "version": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exact version to pin, with state \"present\". Without it, any installed version is accepted."
+    }
+   },
+   "blocks": {}
+  },
+  "package": {
+   "description": "An OS package, installed with dnf on the Red Hat family and apt on Debian and Ubuntu.",
+   "doc": "https://docs.conn3x.org/modules/package/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Package name."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the package, \"delete\" uninstalls it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), \"latest\" or \"absent\"."
+    },
+    "version": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Version to install, with state \"present\"."
+    }
+   },
+   "blocks": {}
+  },
+  "package_hold": {
+   "description": "Holds a package back from updates, or releases it: apt-mark hold on Debian and Ubuntu, dnf versionlock on the Red Hat family. It doesn't install the package.",
+   "doc": "https://docs.conn3x.org/modules/package_hold/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Package name, such as kernel or postgresql16-server."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the hold as it is, \"delete\" releases it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"held\" (default) keeps the package at its version through updates; \"released\" lets it update again."
+    }
+   },
+   "blocks": {}
+  },
+  "package_sources": {
+   "description": "Keeps a host to the distribution's package sources, those repository steps wrote, and keep: any other file in /etc/apt/sources.list.d or /etc/yum.repos.d is moved to /var/lib/conn3x/disabled-sources.",
+   "doc": "https://docs.conn3x.org/modules/package_sources/",
+   "args": {
+    "keep": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "File names to keep as well, such as \"ubuntu-esm-apps.sources\"."
+    },
+    "remove": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The distribution's files to move aside anyway, such as \"rocky-devel.repo\"."
+    }
+   },
+   "blocks": {}
+  },
+  "partition": {
+   "description": "One partition on a disk, made with parted, with a partition table on a disk that has none. It never shrinks, moves or deletes a partition, and never relabels a disk.",
+   "doc": "https://docs.conn3x.org/modules/partition/",
+   "args": {
+    "device": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The disk, such as /dev/vdb or /dev/disk/by-id/...."
+    },
+    "end": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Where it ends: a size, such as \"20GiB\", or a percentage of the disk, such as \"100%\" for the rest of it."
+    },
+    "flags": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The partition's whole set of flags, such as [\"lvm\"] or [\"esp\"]. Unset leaves them alone."
+    },
+    "label": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The partition table to make on a disk without one: \"gpt\" (default) or \"msdos\". A disk with another table is refused, never relabelled."
+    },
+    "number": {
+     "type": "number",
+     "required": true,
+     "writeOnly": false,
+     "description": "The partition's number, from 1. parted numbers a new partition with the lowest free one, so make them in order."
+    },
+    "resize": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Grow the partition when end moves out, as after a disk is enlarged. Shrinking is always refused."
+    },
+    "start": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Where it starts: a size in MiB, GiB or TiB, such as \"1MiB\" for the first."
+    }
+   },
+   "blocks": {}
+  },
+  "pip": {
+   "description": "A Python package in a virtual environment, installed with the venv's own pip. A missing venv is built with python3 -m venv.",
+   "doc": "https://docs.conn3x.org/modules/pip/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Package name, with no version or extras."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this step is removed: \"forget\" (default) leaves the package, \"delete\" uninstalls it. The venv stays either way."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), \"latest\" or \"absent\"."
+    },
+    "user": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Who owns the venv and runs pip. Without it, the connecting user. Required when someone else owns the venv or a directory above it, such as anything in a user's home."
+    },
+    "venv": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the virtual environment."
+    },
+    "version": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exact version to pin, with state \"present\". Without it, any installed version is accepted."
+    }
+   },
+   "blocks": {}
+  },
+  "postgresql_database": {
+   "description": "A database in the PostgreSQL server on the host, managed through psql as the postgres user. Settings left unset are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/postgresql_database/",
+   "args": {
+    "encoding": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Character encoding for a new database, such as UTF8. PostgreSQL can't change it later, so a database with another one fails the apply."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Database name, up to 63 bytes. Renaming makes a new database; the old one stays unless on_remove is \"delete\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the database, \"delete\" drops it and everything in it."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Role that owns it. The role has to exist, so make it in an earlier postgresql_role step."
+    }
+   },
+   "blocks": {}
+  },
+  "postgresql_role": {
+   "description": "A role in the PostgreSQL server on the host, such as an application's login, managed through psql as the postgres user.",
+   "doc": "https://docs.conn3x.org/modules/postgresql_role/",
+   "args": {
+    "attributes": {
+     "type": "set(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exactly the attributes the role has, from SUPERUSER, CREATEDB, CREATEROLE, REPLICATION and BYPASSRLS; those not listed are taken away. Unset leaves them as they are, and a new role gets none."
+    },
+    "database_grants": {
+     "type": "map(set(string))",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exactly the role's database privileges, by database, from CONNECT, CREATE and TEMPORARY, such as { app = [\"CONNECT\"] }. A database not listed loses the role's privileges on it. Grants to PUBLIC aren't touched. Unset leaves them as they are."
+    },
+    "login": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whether the role can log in. Default true, as for a user; false makes a group role."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Role name, up to 63 bytes."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the role, \"delete\" drops it, which PostgreSQL refuses while it owns anything."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password, kept out of plan and state: state records only password_hmac. Conn3x hashes it into a SCRAM-SHA-256 verifier before it leaves this machine, so the plain text never reaches the host or its logs. It's set when the role is made and whenever this value changes. Printable ASCII only. A password changed on the server isn't detected."
+    },
+    "schema_grants": {
+     "type": "map(set(string))",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exactly the role's privileges on schemas, from USAGE and CREATE, keyed database.schema, such as { \"app.public\" = [\"USAGE\"] }. With table_grants, whole-list in the databases either names: a schema there not listed loses the role's privileges. Other databases aren't read."
+    },
+    "table_grants": {
+     "type": "map(set(string))",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exactly the role's privileges on every table in a schema, keyed database.schema, from SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES and TRIGGER, for the tables there now and, by default privileges, those tables_created_by makes later."
+    },
+    "tables_created_by": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whose new tables get table_grants' privileges by default, keyed database.schema. Unset, it's the schema's owner when the step first grants there, and the plan shows it."
+    }
+   },
+   "blocks": {}
+  },
+  "reboot": {
+   "description": "Reboots the host when created and whenever triggers change, then waits for it to come back. Removing it does nothing.",
+   "doc": "https://docs.conn3x.org/modules/reboot/",
+   "args": {
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long to wait for the host to come back. Defaults to \"10m\"."
+    },
+    "triggers": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Reboot again whenever any of these values change."
+    }
+   },
+   "blocks": {}
+  },
+  "replace": {
+   "description": "Every match of a regexp in a file, replaced. The file must already exist.",
+   "doc": "https://docs.conn3x.org/modules/replace/",
+   "args": {
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "regexp": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "What to look for. ^ and $ match at each line, and . doesn't match a line break."
+    },
+    "replace": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "What to put in its place, which can use $1, ${1} and ${name}. Write $$ for a dollar sign. An empty string deletes each match."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    }
+   },
+   "blocks": {}
+  },
+  "repository": {
+   "description": "A package repository and its signing key: a .repo file for dnf, or a .sources file for apt, which then refreshes its package lists.",
+   "doc": "https://docs.conn3x.org/modules/repository/",
+   "args": {
+    "components": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "apt components. Defaults to [\"main\"]."
+    },
+    "key": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "ASCII-armored public key the repository is signed with."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Repository name, used for its file names."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the repository, \"delete\" removes its files."
+    },
+    "suites": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "apt suites, such as [\"noble\"]. Required on Debian and Ubuntu."
+    },
+    "url": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Base URL. dnf expands $releasever and $basearch in it."
+    }
+   },
+   "blocks": {}
+  },
+  "selinux_boolean": {
+   "description": "An SELinux boolean, set now and across reboots. Removing it leaves the value as it is.",
+   "doc": "https://docs.conn3x.org/modules/selinux_boolean/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Boolean, such as httpd_can_network_connect."
+    },
+    "value": {
+     "type": "bool",
+     "required": true,
+     "writeOnly": false,
+     "description": "Whether it is on."
+    }
+   },
+   "blocks": {}
+  },
+  "selinux_fcontext": {
+   "description": "A local SELinux file context rule. Conn3x relabels the files it covers after every change.",
+   "doc": "https://docs.conn3x.org/modules/selinux_fcontext/",
+   "args": {
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) keeps the rule, \"delete\" removes it and relabels."
+    },
+    "setype": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "SELinux type, such as httpd_sys_content_t."
+    },
+    "target": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Path expression, such as /srv/www(/.*)?."
+    }
+   },
+   "blocks": {}
+  },
+  "selinux_mode": {
+   "description": "The host's SELinux mode, enforcing or permissive, in /etc/selinux/config and, while SELinux is on, now. Removing it leaves the mode as it is.",
+   "doc": "https://docs.conn3x.org/modules/selinux_mode/",
+   "args": {
+    "mode": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "\"enforcing\" or \"permissive\". Switching between them takes effect at once. Disabling SELinux isn't a mode here yet."
+    }
+   },
+   "blocks": {}
+  },
+  "service": {
+   "description": "A systemd unit: whether it runs, and whether it starts at boot.",
+   "doc": "https://docs.conn3x.org/modules/service/",
+   "args": {
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Start at boot. Left as is when unset."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Unit name. \".service\" is added when there is no suffix."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the unit, \"delete\" stops and disables it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"started\" or \"stopped\". Left as is when unset."
+    }
+   },
+   "blocks": {}
+  },
+  "snap": {
+   "description": "A snap, installed through snapd and kept on a channel.",
+   "doc": "https://docs.conn3x.org/modules/snap/",
+   "args": {
+    "channel": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Channel to track, such as stable, 5.21/stable or latest/edge. Without it, a snap that's installed keeps its channel, and a new one gets the store's default, stable."
+    },
+    "classic": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true allows classic confinement, as snap install --classic does, which snaps such as code and go need. A snap that is already classic stays so when this is false."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Snap name, such as lxd or microk8s."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the snap, \"delete\" removes it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    }
+   },
+   "blocks": {}
+  },
+  "ssh_keypair": {
+   "description": "An SSH key made on the host with its ssh-keygen, so the private key never leaves it. Only the public key is in state.",
+   "doc": "https://docs.conn3x.org/modules/ssh_keypair/",
+   "args": {
+    "bits": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "For rsa: 3072 (default) or 4096. For ecdsa: 256 (default), 384 or 521."
+    },
+    "comment": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The comment at the end of the public key, such as deploy@web1."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group of both files. Unset keeps the key's."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the key, \"delete\" removes both files."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owner of both files. Unset keeps the key's."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the private key, such as /home/deploy/.ssh/id_ed25519. The public key goes beside it, with .pub on the end."
+    },
+    "type": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"ed25519\" (default), \"rsa\" or \"ecdsa\". Changing it, or bits, makes a new key."
+    }
+   },
+   "blocks": {}
+  },
+  "sudoers": {
+   "description": "A sudo rule in its own file in /etc/sudoers.d, checked with visudo before it's written.",
+   "doc": "https://docs.conn3x.org/modules/sudoers/",
+   "args": {
+    "commands": {
+     "type": "list(string)",
+     "required": true,
+     "writeOnly": false,
+     "description": "The commands, each an absolute path with any arguments, such as /usr/bin/systemctl restart app, or [\"ALL\"]."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The group the rule is for. Set this or user."
+    },
+    "host": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The host the rule applies on, or ALL (the default)."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The file's name in /etc/sudoers.d: letters, digits, _ and -. sudo skips a name with a dot or ending in ~."
+    },
+    "nopassword": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Let the commands run without the user's password. Defaults to false."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the rule in place, \"delete\" removes its file."
+    },
+    "runas": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Who the commands run as: a user, user:group, or ALL (the default)."
+    },
+    "user": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The user the rule is for. Set this or group."
+    }
+   },
+   "blocks": {}
+  },
+  "swap": {
+   "description": "Swap space, a file Conn3x makes or a device that's already swap, on now and in /etc/fstab.",
+   "doc": "https://docs.conn3x.org/modules/swap/",
+   "args": {
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the swap on, \"delete\" turns it off, removes the fstab entry and, for a swap file Conn3x made, the file."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The swap file, such as /swapfile, or a device, such as /dev/vdb or /dev/disk/by-uuid/...."
+    },
+    "priority": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "From -1 to 32767; higher is used first. Unset leaves it to the kernel."
+    },
+    "size": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Makes path a swap file of this size, such as \"2G\" or \"512M\", and makes it again when the size changes. Leave it unset for a device or a file that's already swap; Conn3x won't format either, since that wipes what's there."
+    }
+   },
+   "blocks": {}
+  },
+  "sysctl": {
+   "description": "A kernel parameter, set now and kept across reboots in /etc/sysctl.d.",
+   "doc": "https://docs.conn3x.org/modules/sysctl/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Key, such as net.ipv4.ip_forward."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the setting, \"delete\" removes its file; the running value stays until reboot."
+    },
+    "value": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Value. Separate several with spaces."
+    }
+   },
+   "blocks": {}
+  },
+  "template": {
+   "description": "A file rendered from a template on your machine, then written to the host.",
+   "doc": "https://docs.conn3x.org/modules/template/",
+   "args": {
+    "source": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Path to the template file."
+    },
+    "destination": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file on the host."
+    },
+    "vars": {
+     "type": "map",
+     "required": false,
+     "writeOnly": false,
+     "description": "Values the template can use."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Four octal digits, such as `\"0644\"`."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owner of the file."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group of the file."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "`\"forget\"` (default) leaves the file, `\"delete\"` removes it."
+    },
+    "write_only": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "`true` keeps the rendered file out of the plan and state, which record only an HMAC. Use it when `vars` hold secrets. A literal `true` or `false`. See secrets in files."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "A command that checks the rendered file before it replaces the old one, such as `\"nginx -t -c %s\"`. `%s` stands for the temporary file; write it bare, not quoted. See Validating."
+    },
+    "confirm_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a change that could lock Conn3x out, such as `\"60s\"`: the host puts the old file back by itself unless Conn3x logs in again over a new connection in time. See Confirming."
+    },
+    "reload": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "With `confirm_after`: a command that makes the new file take effect, such as `\"systemctl reload sshd\"`, run after writing and again after a revert."
+    }
+   },
+   "blocks": {}
+  },
+  "timer": {
+   "description": "A systemd timer that runs a command on a schedule.",
+   "doc": "https://docs.conn3x.org/modules/timer/",
+   "args": {
+    "command": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Command to run (ExecStart)."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Unit description."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Unit name, without .timer or .service."
+    },
+    "on_calendar": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "systemd calendar expression, such as \"daily\" or \"*-*-* 02:30:00\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) stops the timer and removes its units, \"forget\" leaves it."
+    },
+    "persistent": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Run a missed job at the next boot."
+    },
+    "user": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "User the command runs as. Defaults to root."
+    }
+   },
+   "blocks": {}
+  },
+  "timezone": {
+   "description": "The host's time zone.",
+   "doc": "https://docs.conn3x.org/modules/timezone/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "IANA time zone, such as Europe/Dublin or UTC."
+    }
+   },
+   "blocks": {}
+  },
+  "tls_csr": {
+   "description": "A certificate signing request for a key already on the host, such as one from tls_private_key, for your own CA to sign. Made with the host's openssl.",
+   "doc": "https://docs.conn3x.org/modules/tls_csr/",
+   "args": {
+    "common_name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Subject common name, such as the host's name."
+    },
+    "dns_names": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Host names to ask for as subject alternative names."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group. Unset keeps the file's."
+    },
+    "ip_addresses": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "IP addresses to ask for as subject alternative names."
+    },
+    "key_path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the private key it's for."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Octal permissions. Defaults to \"0644\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file, \"delete\" removes it."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owner. Unset keeps the file's."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the request file."
+    }
+   },
+   "blocks": {}
+  },
+  "tls_private_key": {
+   "description": "A private key in a PEM file, generated on the host with its openssl, so the key never leaves it. Only the public key is in state.",
+   "doc": "https://docs.conn3x.org/modules/tls_private_key/",
+   "args": {
+    "bits": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "For rsa: 2048, 3072 (default) or 4096."
+    },
+    "curve": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For ecdsa: \"P-256\" (default) or \"P-384\"."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group. Unset keeps the file's."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Octal permissions, ending in 0 so others can't read it. Defaults to \"0600\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the key, \"delete\" removes it."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owner. Unset keeps the file's."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the key file."
+    },
+    "type": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"rsa\" (default), \"ecdsa\" or \"ed25519\". Changing it, or bits or curve, generates a new key."
+    }
+   },
+   "blocks": {}
+  },
+  "tls_self_signed_cert": {
+   "description": "A self-signed certificate for a key already on the host, such as one from tls_private_key, made with the host's openssl and renewed before it expires.",
+   "doc": "https://docs.conn3x.org/modules/tls_self_signed_cert/",
+   "args": {
+    "common_name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Subject common name, such as the host's name."
+    },
+    "days": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long it's valid, from 1 to 3650 days. Defaults to 365."
+    },
+    "dns_names": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Host names in the subject alternative names. Clients check these, not the common name."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Group. Unset keeps the file's."
+    },
+    "ip_addresses": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "IP addresses in the subject alternative names."
+    },
+    "key_path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the private key it's for."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Octal permissions. Defaults to \"0644\"."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file, \"delete\" removes it."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owner. Unset keeps the file's."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the certificate file."
+    },
+    "renew_before_days": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "Refresh plans a new certificate when fewer days than this are left. Defaults to 30."
+    }
+   },
+   "blocks": {}
+  },
+  "ufw": {
+   "description": "A ufw rule for a port. Rules take effect once ufw is enabled; allow SSH before enabling it.",
+   "doc": "https://docs.conn3x.org/modules/ufw/",
+   "args": {
+    "action": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "allow, deny, reject or limit."
+    },
+    "confirm_after": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a rule change that could lock Conn3x out, such as removing the rule that lets SSH in, or a ufw deny on its port: before the change, the host schedules its own undo after this long, such as \"60s\"; after it, Conn3x logs in again over a new connection and cancels it. If that login doesn't come, the host takes the change back by itself, even if Conn3x has gone away. Needs systemd."
+    },
+    "from": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Address or CIDR the rule applies to. Defaults to anywhere."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) closes the port again when the rule is removed or replaced, \"forget\" leaves it open."
+    },
+    "port": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Port, optionally with a protocol: 22, 22/tcp or 6000:6007/tcp."
+    }
+   },
+   "blocks": {}
+  },
+  "uri": {
+   "description": "Makes one HTTP call from the host when the step is first applied, and again whenever its arguments or triggers change, such as registering the host with a load balancer after a deploy. A refresh doesn't call it.",
+   "doc": "https://docs.conn3x.org/modules/uri/",
+   "args": {
+    "body": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The request body, such as jsonencode({ host = \"web1\" })."
+    },
+    "body_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "The body, kept out of plan and state. Set this or body."
+    },
+    "headers": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Request headers, such as { \"Content-Type\" = \"application/json\" }."
+    },
+    "headers_wo": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": true,
+     "description": "Headers kept out of plan and state, such as an Authorization header. A change to them doesn't call again on its own: put a version of the secret in triggers for that."
+    },
+    "method": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "GET (default), POST, PUT, PATCH, DELETE or HEAD."
+    },
+    "skip_tls_verify": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true accepts any certificate for an https:// url."
+    },
+    "status_codes": {
+     "type": "list(number)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The answers that count as success. Defaults to [200]. Redirects are followed first."
+    },
+    "triggers": {
+     "type": "dynamic",
+     "required": false,
+     "writeOnly": false,
+     "description": "Any value; the call is made again whenever it changes."
+    },
+    "url": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "An http:// or https:// URL. The request is the host's: it goes through the SSH connection and leaves from the host, so 127.0.0.1 is the host, and it needs no curl there."
+    }
+   },
+   "blocks": {}
+  },
+  "user": {
+   "description": "A local user account.",
+   "doc": "https://docs.conn3x.org/modules/user/",
+   "args": {
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Primary group."
+    },
+    "groups": {
+     "type": "set(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Supplementary groups: the complete list."
+    },
+    "home": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Home directory. Created with the user."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Login name."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the account, \"delete\" removes it and keeps its home directory."
+    },
+    "shell": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Login shell."
+    },
+    "system": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create as a system account."
+    },
+    "uid": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "User ID."
+    }
+   },
+   "blocks": {}
+  },
+  "vyos_config": {
+   "description": "Experimental. Statements of a VyOS router's configuration, as set lines. Only the lines named here are owned; with match = \"block\" the statements under prefix must be exactly these.",
+   "doc": "https://docs.conn3x.org/modules/vyos_config/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "lines": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Set statements, as show configuration commands prints them, such as \"set interfaces ethernet eth0 description 'uplink'\". Quotes are compared loosely: 'uplink', \"uplink\" and uplink are the same value. State keeps them, so put statements holding a secret in lines_wo."
+    },
+    "lines_wo": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: set statements whose last word is a secret, such as \"set protocols bgp 65000 neighbor 192.0.2.1 password 'MyPassword'\", never kept in state. The device shows most secrets hashed or encrypted, so each is matched by its path, the statement without that word: it's in sync when the path holds a value. A change to any of them sets them all again."
+    },
+    "match": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"lines\" (default): these statements must be there, and others are left alone. \"block\": the statements under prefix must be exactly these, so others under it are deleted. Needs prefix."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the router when this resource is removed: \"forget\" (default) leaves the statements, \"delete\" deletes them."
+    },
+    "prefix": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "With match = \"block\": the node the lines own, such as \"protocols static\". Every line must start with set and this prefix."
+    }
+   },
+   "blocks": {}
+  },
+  "vyos_hostname": {
+   "description": "Experimental. A VyOS router's host name. Removing this step leaves the name as it is.",
+   "doc": "https://docs.conn3x.org/modules/vyos_hostname/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Host name, such as r1. VyOS takes letters, digits and hyphens."
+    }
+   },
+   "blocks": {}
+  },
+  "vyos_interface": {
+   "description": "Experimental. The settings Conn3x owns on one VyOS interface: description, addresses, enabled and MTU. Each one left unset is left alone, and so is every other statement under the interface.",
+   "doc": "https://docs.conn3x.org/modules/vyos_interface/",
+   "args": {
+    "addresses": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its whole set of addresses, each with its prefix length, such as 192.0.2.1/24, or dhcp or dhcpv6. Addresses not listed are deleted; taking off the one Conn3x connects to is refused."
+    },
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its description. No quotes or backslashes."
+    },
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "false sets disable, true deletes it. Disabling the interface whose address Conn3x connects to is refused."
+    },
+    "mtu": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "MTU, 68 to 16000."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The interface, such as eth0, bond0, br0, wg0 or lo."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens when this resource is removed: \"forget\" (default) leaves the interface as it is, \"delete\" deletes the statements it owns. The interface itself stays."
+    }
+   },
+   "blocks": {}
+  },
+  "vyos_static_route": {
+   "description": "Experimental. One static route on a VyOS router, owned whole: its next hops are exactly these, and anything else under the route is deleted.",
+   "doc": "https://docs.conn3x.org/modules/vyos_static_route/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "distance": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "Administrative distance for every next hop, 1 to 255. Unset is VyOS's default, 1; 255 disables the route."
+    },
+    "next_hops": {
+     "type": "list(string)",
+     "required": true,
+     "writeOnly": false,
+     "description": "The next hop addresses, of the prefix's family. With more than one, VyOS spreads traffic across them."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the router when this resource is removed: \"forget\" (default) leaves the route, \"delete\" deletes it."
+    },
+    "prefix": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The network, such as 10.20.0.0/16 or 2001:db8:20::/48. An IPv6 one goes under route6."
+    }
+   },
+   "blocks": {}
+  },
+  "vyos_user": {
+   "description": "Experimental. A local account on a VyOS router: its full name, password and SSH keys. Every VyOS account can configure the router. Conn3x won't delete the account it logs in as, or take all its keys away.",
+   "doc": "https://docs.conn3x.org/modules/vyos_user/",
+   "args": {
+    "circuit": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The circuit this belongs to. Circuits set it: a switch's config session holds one circuit's lines at a time."
+    },
+    "full_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The account's full name or description. No quotes. Unset leaves it alone."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The account name: lower-case letters, digits, _ . and -. Not root."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the account when the step goes, as with every step that grants access; \"forget\" leaves it."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: the password, never kept in state. Conn3x hashes it here and sends the router the salted SHA-512 crypt hash, as encrypted-password, so the password itself never reaches the CLI; a new value plans a change through password_hmac. Unset leaves the account's password alone."
+    },
+    "ssh_keys": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The account's public keys, one line each, such as \"ssh-ed25519 AAAA... alice@laptop\". Each is labelled on the router by its comment, or by a hash of the key without one. Keys not listed are deleted; [] deletes them all, and unset leaves them alone."
+    }
+   },
+   "blocks": {}
+  },
+  "wait_for": {
+   "description": "Waits until a path exists, a TCP port is listening, or a URL answers on the host. Refresh checks again, so a later apply waits again if it stopped.",
+   "doc": "https://docs.conn3x.org/modules/wait_for/",
+   "args": {
+    "body_contains": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Text the answer's body must hold for url, such as \"ok\". The first MiB is read."
+    },
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Path to wait for. Set one of path, port and url."
+    },
+    "port": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "TCP port to wait for a listener on. Set one of path, port and url."
+    },
+    "skip_tls_verify": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true accepts any certificate for an https:// url, such as a self-signed one on a new host. Defaults to false."
+    },
+    "status_codes": {
+     "type": "list(number)",
+     "required": false,
+     "writeOnly": false,
+     "description": "The answers that count for url. Defaults to [200]. Redirects are followed first."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long to wait. Defaults to \"5m\"."
+    },
+    "url": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "An http:// or https:// URL to GET until it answers with one of status_codes, such as http://127.0.0.1:8080/healthz. The request is the host's own: it goes through the SSH connection and leaves from the host, so 127.0.0.1 is the host, and it needs no curl there. Set one of path, port and url."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_acl": {
+   "description": "Access rules on a file or folder that already exists on a Windows host. Rules are compared by SID, so names and case cause no difference. It won't follow a link. Removing the step leaves the rules as they are.",
+   "doc": "https://docs.conn3x.org/modules/windows_acl/",
+   "args": {
+    "authoritative": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Remove any rule set directly on the path that isn't listed here. Defaults to false, which only adds. Rules it inherits stay; set inherit = false to drop those."
+    },
+    "inherit": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whether the path inherits rules from its folder. Left as it is when unset."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Owning user or group. Left as it is when unset."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Full path on a local drive."
+    }
+   },
+   "blocks": {
+    "entry": {
+     "description": "One access rule.",
+     "args": {
+      "inheritance": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "What below a folder also gets this rule: \"none\", \"object\", \"container\" or \"container,object\". Defaults to \"container,object\" on a folder and \"none\" on a file."
+      },
+      "principal": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "A user, group or SID, such as BUILTIN\\Users or S-1-5-32-545."
+      },
+      "rights": {
+       "type": "list(string)",
+       "required": true,
+       "writeOnly": false,
+       "description": "Any of FullControl, Modify, ReadAndExecute, Read, Write, Delete, ReadPermissions, ChangePermissions and TakeOwnership."
+      },
+      "type": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "\"allow\" (default) or \"deny\"."
+      }
+     },
+     "blocks": {}
+    }
+   }
+  },
+  "windows_ad_domain": {
+   "description": "A new domain in an Active Directory forest that exists, a child or a new tree, with this Windows host as its first domain controller and DNS server. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the domain; nothing is demoted.",
+   "doc": "https://docs.conn3x.org/modules/windows_ad_domain/",
+   "args": {
+    "database_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for the AD database. Windows' default is C:\\Windows\\NTDS. Used only when the domain is made."
+    },
+    "domain_name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Full DNS name of the new domain, such as emea.lab.example.com. For a child, everything after the first label is the parent domain, which must exist. For a tree, a name outside the forest's other domains, such as apac.example.net."
+    },
+    "domain_type": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"child\" (default), a domain under the one its name says, or \"tree\", a new tree in the forest beside its other domains. Used only when the domain is made."
+    },
+    "log_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for the AD logs. Used only when the domain is made."
+    },
+    "netbios_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "NetBIOS name of the new domain, up to 15 characters, such as EMEA. Unset lets Windows take it from the first label. Used only when the domain is made."
+    },
+    "parent_domain_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "For a tree: a domain in the forest it joins, usually the forest root, such as lab.example.com. Not set for a child. Used only when the domain is made."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password for username, kept out of plan and state. Needed to make the domain, and used only then."
+    },
+    "safe_mode_password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Directory Services Restore Mode password for this domain controller, kept out of plan and state. Needed to make the domain, and used only then: changing it later changes nothing on the host."
+    },
+    "sysvol_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for SYSVOL. Used only when the domain is made."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long promotion may take. Defaults to \"30m\"."
+    },
+    "username": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Account in the forest that may add a domain, a member of Enterprise Admins, named by its domain's DNS name: admin@lab.example.com or lab.example.com\\admin, not LAB\\admin. Its domain is the new domain's parent or another domain above it. Used only when the domain is made."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_ad_domain_controller": {
+   "description": "This Windows host as another domain controller, and DNS server, in an Active Directory domain that exists. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the domain controller; nothing is demoted.",
+   "doc": "https://docs.conn3x.org/modules/windows_ad_domain_controller/",
+   "args": {
+    "database_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for the AD database. Windows' default is C:\\Windows\\NTDS. Used only when promoting."
+    },
+    "domain_name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "DNS name of the domain, such as lab.example.com."
+    },
+    "log_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for the AD logs. Used only when promoting."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password for username, kept out of plan and state. Needed to promote, and used only then."
+    },
+    "safe_mode_password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Directory Services Restore Mode password for this domain controller, kept out of plan and state. Needed to promote, and used only then: changing it later changes nothing on the host."
+    },
+    "sysvol_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for SYSVOL. Used only when promoting."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long promotion may take. Defaults to \"30m\"."
+    },
+    "username": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Domain account that may add domain controllers, such as LAB\\admin, a member of Domain Admins. Used only when promoting."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_ad_forest": {
+   "description": "A new Active Directory forest, with this Windows host as its first domain controller and DNS server. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the forest; nothing is demoted.",
+   "doc": "https://docs.conn3x.org/modules/windows_ad_forest/",
+   "args": {
+    "database_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for the AD database. Windows' default is C:\\Windows\\NTDS. Used only when the forest is made."
+    },
+    "domain_name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "DNS name of the forest root domain, such as lab.example.com."
+    },
+    "log_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for the AD logs. Used only when the forest is made."
+    },
+    "netbios_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "NetBIOS name of the domain, up to 15 characters, such as LAB. Unset lets Windows take it from the first label. Used only when the forest is made."
+    },
+    "safe_mode_password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Directory Services Restore Mode password, kept out of plan and state. Needed to make the forest, and used only then: changing it later changes nothing on the host."
+    },
+    "sysvol_path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder for SYSVOL. Used only when the forest is made."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long promotion may take. Defaults to \"30m\"."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_ad_group": {
+   "description": "A group in Active Directory, and who is in it, run on a domain controller. Settings left unset are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/windows_ad_group/",
+   "args": {
+    "authoritative": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true makes members the complete list: anyone else is taken out. Never the login Conn3x uses, in a group it gets its rights through."
+    },
+    "category": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"security\" or \"distribution\". Unset, a new group is a security group."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description."
+    },
+    "members": {
+     "type": "set(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Accounts that must be in it: by sAMAccountName in this domain, such as alice, ops or web1$ (computers with their trailing $), or as DOMAIN\\name or a UPN for an account in another domain of the forest or one it trusts, such as EMEA\\carol or carol@emea.lab.example.com. Compared by SID, so one account written two ways is one member. Others are left in unless authoritative is set."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Group name, used as both its name and its sAMAccountName, such as AppAdmins."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens in the domain when this resource is removed: \"forget\" (default) leaves the group, \"delete\" deletes it."
+    },
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Distinguished name of the OU or container it's in, such as OU=Lab,DC=lab,DC=example,DC=com. Unset leaves it where it is, and a new one goes to Windows' default, CN=Users. A group found elsewhere is moved."
+    },
+    "scope": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"domainlocal\", \"global\" or \"universal\". Unset, a new group is global."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_ad_ou": {
+   "description": "An organizational unit in Active Directory, run on a domain controller. Settings left unset are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/windows_ad_ou/",
+   "args": {
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "OU name, such as Servers."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens in the domain when this resource is removed: \"forget\" (default) leaves the OU; it never deletes one that's protected or not empty, \"delete\" deletes it."
+    },
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Distinguished name of the parent, such as OU=Lab,DC=lab,DC=example,DC=com. Unset is the top of the domain. Changing it makes a new OU."
+    },
+    "protected": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whether the OU is protected from accidental deletion. Unset, a new OU is protected, as Windows does."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_ad_user": {
+   "description": "A user in Active Directory, run on a domain controller. Settings left unset are left as they are. Groups are set with windows_ad_group.",
+   "doc": "https://docs.conn3x.org/modules/windows_ad_user/",
+   "args": {
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description."
+    },
+    "display_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Display name, such as Alice Smith."
+    },
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true enables the account, false disables it. Unset, a new user is enabled when it has password_wo, and disabled when it doesn't."
+    },
+    "given_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "First name."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Logon name, used as both its sAMAccountName and its name in the directory, up to 20 characters, such as alice."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens in the domain when this resource is removed: \"forget\" (default) leaves the user, \"delete\" deletes it."
+    },
+    "password_never_expires": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true sets the password never to expire."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password, kept out of plan and state: state records only password_hmac. It's set when the user is made and whenever this value changes. A password changed in the domain isn't detected."
+    },
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Distinguished name of the OU or container it's in, such as OU=Lab,DC=lab,DC=example,DC=com. Unset leaves it where it is, and a new one goes to Windows' default, CN=Users. A user found elsewhere is moved."
+    },
+    "surname": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Last name."
+    },
+    "upn": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "User principal name, such as alice@lab.example.com."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_certificate": {
+   "description": "Experimental. A certificate file on a Windows host, imported into a certificate store: a CA's .cer into Root, or a server's .pfx, with its private key, into My for IIS.",
+   "doc": "https://docs.conn3x.org/modules/windows_certificate/",
+   "args": {
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the certificate in the store, \"delete\" takes it out. The file stays either way."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Write-only: a .pfx's password, never kept in state or plan files."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The file on the host, ending in .cer, .crt, .der, .pfx or .p12, such as C:\\certs\\web.pfx. A .pfx or .p12 is imported with its private key."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), or \"absent\" to take the certificate out of the store."
+    },
+    "store_location": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"LocalMachine\" (default) or \"CurrentUser\", the account Conn3x logs in as."
+    },
+    "store_name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The store, such as My (personal, where IIS looks), Root, CA, TrustedPeople or WebHosting."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_directory": {
+   "description": "A folder on a Windows host, with any missing above it. Removing the step leaves the folder.",
+   "doc": "https://docs.conn3x.org/modules/windows_directory/",
+   "args": {
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Full path on a local drive, such as C:\\app\\logs."
+    }
+   },
+   "blocks": {
+    "acl": {
+     "description": "The folder's whole list of access rules, in place from the moment it exists, and nothing inherited. Without it, a new folder inherits from the one above. Include whoever Conn3x logs in as.",
+     "args": {
+      "inheritance": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "What below a folder also gets this rule: \"none\", \"object\", \"container\" or \"container,object\". Defaults to \"container,object\" on a folder and \"none\" on a file."
+      },
+      "principal": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "A user, group or SID, such as BUILTIN\\Users or S-1-5-32-545."
+      },
+      "rights": {
+       "type": "list(string)",
+       "required": true,
+       "writeOnly": false,
+       "description": "Any of FullControl, Modify, ReadAndExecute, Read, Write, Delete, ReadPermissions, ChangePermissions and TakeOwnership."
+      },
+      "type": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "\"allow\" (default) or \"deny\"."
+      }
+     },
+     "blocks": {}
+    }
+   }
+  },
+  "windows_dns_client": {
+   "description": "The DNS servers one network interface on a Windows host asks, in order. Removing the step leaves them as they are.",
+   "doc": "https://docs.conn3x.org/modules/windows_dns_client/",
+   "args": {
+    "interface": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Interface alias, such as Ethernet. Unset picks the interface with the IPv4 default route."
+    },
+    "servers": {
+     "type": "list(string)",
+     "required": true,
+     "writeOnly": false,
+     "description": "IPv4 and IPv6 addresses of DNS servers, in the order to ask them. Only the address families listed are set: IPv4 servers alone leave IPv6 as it is."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_dns_record": {
+   "description": "Experimental. One name's DNS records of one type, in a zone on a Windows DNS server such as a domain controller, owned as a set.",
+   "doc": "https://docs.conn3x.org/modules/windows_dns_record/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The name in the zone, such as www, or @ for the zone itself."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the server when this resource is removed: \"forget\" (default) leaves the records, \"delete\" removes them."
+    },
+    "ttl": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "Time to live, in seconds. Defaults to 3600."
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "\"A\", \"AAAA\", \"CNAME\", \"PTR\" or \"TXT\"."
+    },
+    "values": {
+     "type": "list(string)",
+     "required": true,
+     "writeOnly": false,
+     "description": "Every value the name has of this type: addresses for A and AAAA, so several make round robin, one host name for a CNAME, host names for PTR, text for TXT. Values not listed are removed."
+    },
+    "zone": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The zone, such as corp.example.com. It must be on the server the step runs on."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_domain_membership": {
+   "description": "This Windows host joined to an Active Directory domain as a member. It never reboots: reboot_required says Windows wants one, and windows_reboot does it. Removing the step leaves the host in the domain; nothing is unjoined.",
+   "doc": "https://docs.conn3x.org/modules/windows_domain_membership/",
+   "args": {
+    "domain": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "DNS name of the domain to join, such as lab.example.com."
+    },
+    "ou": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Distinguished name of the OU for the computer's account, such as OU=Servers,DC=lab,DC=example,DC=com. Unset uses the domain's default. Used only when joining."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password for username, kept out of plan and state. Needed to join, and used only then."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long joining may take. Defaults to \"10m\"."
+    },
+    "username": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Domain account that may join computers, such as LAB\\joiner or joiner@lab.example.com. Used only when joining."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_environment": {
+   "description": "Experimental. One environment variable on a Windows host, the machine's or the login user's, as the registry holds it, unexpanded. New logons see a change; programs already running keep the environment they started with.",
+   "doc": "https://docs.conn3x.org/modules/windows_environment/",
+   "args": {
+    "level": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"machine\" (default), in HKLM for every account, or \"user\", in HKCU for the account Conn3x logs in as. Changing it is a different variable."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The variable, such as JAVA_HOME. Not Path: give each folder in it a windows_path step."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the variable, \"delete\" removes it."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), or \"absent\" to remove the variable."
+    },
+    "value": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its value, compared as written: %SystemRoot% stays %SystemRoot%. A new variable with % in it is stored to expand; an existing one keeps its type. Required unless state is \"absent\"."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_feature": {
+   "description": "A Windows Server role or feature. It never reboots: reboot_required says whether Windows wants one, and windows_reboot does it.",
+   "doc": "https://docs.conn3x.org/modules/windows_feature/",
+   "args": {
+    "include_management_tools": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Also install its management tools."
+    },
+    "include_sub_features": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Also install everything under it."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Feature name, such as Web-Server."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long to allow. Defaults to \"30m\"."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_file": {
+   "description": "A file on a Windows host, written byte for byte: no line ending conversion. It never writes through a link, and refuses a folder on the way that another account could change.",
+   "doc": "https://docs.conn3x.org/modules/windows_file/",
+   "args": {
+    "content": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Exact content, up to 2 MiB. Set this or content_wo."
+    },
+    "content_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Exact content, kept out of state: state records only content_hmac. Use it for secrets. Unless acl is set, only SYSTEM and Administrators can read the file."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the file, \"delete\" removes it."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Full path on a local drive, such as C:\\app\\config.json. Its folder must already exist."
+    }
+   },
+   "blocks": {
+    "acl": {
+     "description": "The file's whole list of access rules, in place before any content is written, and nothing inherited. Without it, a new file inherits from its folder, and a file already there keeps its rules. Include whoever Conn3x logs in as, or later reads will fail.",
+     "args": {
+      "inheritance": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "What below a folder also gets this rule: \"none\", \"object\", \"container\" or \"container,object\". Defaults to \"container,object\" on a folder and \"none\" on a file."
+      },
+      "principal": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "A user, group or SID, such as BUILTIN\\Users or S-1-5-32-545."
+      },
+      "rights": {
+       "type": "list(string)",
+       "required": true,
+       "writeOnly": false,
+       "description": "Any of FullControl, Modify, ReadAndExecute, Read, Write, Delete, ReadPermissions, ChangePermissions and TakeOwnership."
+      },
+      "type": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "\"allow\" (default) or \"deny\"."
+      }
+     },
+     "blocks": {}
+    }
+   }
+  },
+  "windows_firewall_rule": {
+   "description": "A Windows Firewall rule, found by its name.",
+   "doc": "https://docs.conn3x.org/modules/windows_firewall_rule/",
+   "args": {
+    "action": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"allow\" (default) or \"block\"."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description. Left as it is when unset."
+    },
+    "direction": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"inbound\" (default) or \"outbound\"."
+    },
+    "display_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Name shown in Windows' tools. A new rule gets name; an existing one keeps its own when unset."
+    },
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whether the rule is on. Defaults to true."
+    },
+    "local_ports": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Ports on this host, such as \"443\" or \"8000-8100\". Needs protocol \"tcp\" or \"udp\". Unset means any."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The rule's name, which is its ID: letters, digits, spaces and . _ ( ) -."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the rule when the step is removed or replaced, \"forget\" leaves it."
+    },
+    "profiles": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Network profiles the rule applies in: \"domain\", \"private\", \"public\". Unset means all."
+    },
+    "protocol": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"tcp\", \"udp\", \"icmpv4\", \"icmpv6\" or \"any\" (default). An inbound allow rule with no local_ports and no remote_addresses must set it, so a rule that lets everything in is never made by leaving settings out."
+    },
+    "remote_addresses": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Addresses the traffic comes from or goes to: IP addresses, subnets such as 10.0.0.0/8, ranges such as 10.0.0.1-10.0.0.9, or LocalSubnet. Unset means any."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_group": {
+   "description": "A local group on a Windows host, and who is in it. Settings left unset are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/windows_group/",
+   "args": {
+    "authoritative": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true makes members the complete list: anyone else is taken out. Never the login Conn3x uses."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description, up to 48 characters."
+    },
+    "members": {
+     "type": "set(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Users and groups that must be in it, by name, such as LAB\\alice, or by SID. Others are left in unless authoritative is set."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Group name, such as Remote Desktop Users."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the group, \"delete\" deletes it."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_iis_app_pool": {
+   "description": "An IIS application pool, found by its name.",
+   "doc": "https://docs.conn3x.org/modules/windows_iis_app_pool/",
+   "args": {
+    "identity": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Account the pool runs as: \"ApplicationPoolIdentity\" (default), \"NetworkService\", \"LocalService\" or \"LocalSystem\"."
+    },
+    "managed_runtime_version": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"v4.0\" (default), \"v2.0\", or \"\" for no managed code."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The pool's name: letters, digits, spaces and . _ ( ) -."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the pool when the step is removed or replaced, \"forget\" leaves it."
+    },
+    "pipeline_mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"integrated\" (default) or \"classic\"."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"started\" (default) or \"stopped\". Also whether it starts with IIS."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_iis_site": {
+   "description": "An IIS site, found by its name.",
+   "doc": "https://docs.conn3x.org/modules/windows_iis_site/",
+   "args": {
+    "app_pool": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Application pool the site runs in, which must exist. A new site gets IIS's default; an existing one keeps its own when unset."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The site's name: letters, digits, spaces and . _ ( ) -."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the site when the step is removed or replaced, \"forget\" leaves it. Its files stay either way."
+    },
+    "physical_path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Folder the site serves, on a local drive, such as C:\\sites\\www."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"started\" (default) or \"stopped\". Also whether it starts with IIS."
+    }
+   },
+   "blocks": {
+    "binding": {
+     "description": "Where the site listens. These are all its bindings: one added by hand shows as drift and is removed.",
+     "args": {
+      "host_header": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "Host name the site answers to, such as www.example.com. Unset answers any."
+      },
+      "ip": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "Address to listen on, or \"*\" (default) for all."
+      },
+      "port": {
+       "type": "number",
+       "required": true,
+       "writeOnly": false,
+       "description": "Port, such as 80."
+      },
+      "protocol": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "\"http\" (default), the only one for now."
+      }
+     },
+     "blocks": {}
+    }
+   }
+  },
+  "windows_package": {
+   "description": "An MSI package on a Windows host, found by its product code. It never reboots: reboot_required says whether Windows wants one, and windows_reboot with only_if_pending does it.",
+   "doc": "https://docs.conn3x.org/modules/windows_package/",
+   "args": {
+    "allow_http": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Let url be, or redirect to, plain http. sha256 still has to match. Off by default."
+    },
+    "max_size_mb": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "Largest download, in MiB. Defaults to 2048."
+    },
+    "product_code": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The MSI's ProductCode, a GUID in braces. Windows lists the package under it once installed."
+    },
+    "properties": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Public MSI properties, such as INSTALLDIR. They're on msiexec's command line and in state: never secrets."
+    },
+    "sha256": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "SHA-256 of the .msi. Required with source or url: nothing installs unless the file matches."
+    },
+    "source": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Path of the .msi already on the host. Set this or url."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\"."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long to allow. Defaults to \"30m\"."
+    },
+    "url": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "http or https address the host downloads the .msi from. Set this or source."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_path": {
+   "description": "Experimental. One folder in a Windows host's Path, the machine's or the login user's. The other folders and their order stay as they are. New logons see a change; programs already running keep the Path they started with.",
+   "doc": "https://docs.conn3x.org/modules/windows_path/",
+   "args": {
+    "element": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The folder, such as C:\\Program Files\\Go\\bin. Compared as Windows does, without case and with or without a trailing backslash. Added at the end."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the folder in Path, \"delete\" takes it out."
+    },
+    "scope": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"machine\" (default), in HKLM for every account, or \"user\", in HKCU for the account Conn3x logs in as. Changing it is a different Path entry."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default), or \"absent\" to take every copy of the folder out."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_powershell": {
+   "description": "A PowerShell script on a Windows host, for what no module covers yet. Guards say when it has already done its job.",
+   "doc": "https://docs.conn3x.org/modules/windows_powershell/",
+   "args": {
+    "args": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Values the script reads as $A.name. They reach it as data, never as code."
+    },
+    "args_wo": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": true,
+     "description": "Like args, but kept out of state: state records only args_hmac, and the values are blanked from output and errors. Use it for secrets."
+    },
+    "creates": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Skip the script while this path exists."
+    },
+    "removes": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Skip the script while this path is missing."
+    },
+    "script": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "PowerShell script. Start it with param($A), and read arguments as $A.name rather than interpolating them into the text."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long the script may run before it is stopped. Defaults to \"30m\"."
+    },
+    "triggers": {
+     "type": "dynamic",
+     "required": false,
+     "writeOnly": false,
+     "description": "Any value; the script runs again whenever it changes."
+    },
+    "unless": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Skip the script while this PowerShell check holds: it holds unless it throws, its last output is $false, or a native program it ran last exited non-zero. It runs at every plan, so it must change nothing. It gets args but never args_wo, which a plan doesn't have."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_reboot": {
+   "description": "Reboots a Windows host when created and whenever triggers change, then waits for it to come back. With only_if_pending it reboots only when Windows is waiting for one. Removing it does nothing.",
+   "doc": "https://docs.conn3x.org/modules/windows_reboot/",
+   "args": {
+    "earlier_revisions": {
+     "type": "dynamic",
+     "required": false,
+     "writeOnly": false,
+     "description": "Set by the circuit, so leave it unset: the revisions of the steps before this one. With only_if_pending, a plan that changes any of them checks for a pending reboot at apply time, so a reboot an earlier step leaves pending comes in the same apply."
+    },
+    "only_if_pending": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Reboot only when Windows reports a reboot is pending, and plan one whenever a refresh finds that, so a reboot a failed run missed still happens."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long to wait for the host to come back. Defaults to \"10m\"."
+    },
+    "triggers": {
+     "type": "map(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Reboot again whenever any of these values change."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_registry_value": {
+   "description": "One registry value under HKLM on a Windows host. The value's type and data are compared with what's there, without expanding environment names.",
+   "doc": "https://docs.conn3x.org/modules/windows_registry_value/",
+   "args": {
+    "data": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The data: a decimal number for dword and qword, hex for binary, one value per line for multi_string. Set this or data_wo."
+    },
+    "data_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Like data, but kept out of state: state records only data_hmac. Use it for secrets."
+    },
+    "key": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Key under HKLM, such as HKLM\\SOFTWARE\\App. Created if it's missing."
+    },
+    "name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Value name. Leave unset for the key's default value."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the value, \"delete\" removes the value and leaves the key."
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "\"string\", \"expand_string\", \"multi_string\", \"dword\", \"qword\" or \"binary\"."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_scheduled_task": {
+   "description": "A scheduled task on a Windows host that runs one program.",
+   "doc": "https://docs.conn3x.org/modules/windows_scheduled_task/",
+   "args": {
+    "allow_interpreter": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Let execute be a program that runs code from its arguments, such as cmd.exe, powershell.exe, wscript.exe, rundll32.exe or python.exe. Conn3x checks the paths it can see in arguments, but not code inside them, such as -Command text or -EncodedCommand."
+    },
+    "arguments": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its arguments. They're in the task, readable by administrators, and in state: never secrets."
+    },
+    "data_paths": {
+     "type": "set(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Full paths in arguments that the program only reads data from or writes output to, such as a log file. Each must appear exactly once in arguments, and skips the admin-only check, so anyone who can write there can change them. Never list a file or folder the program loads code or settings from, or runs."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description. Left as it is when unset."
+    },
+    "enabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Whether the task can run. Defaults to true."
+    },
+    "execute": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the program to run, such as C:\\Windows\\System32\\cmd.exe."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Task name: letters, digits, spaces and . _ ( ) -."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) deletes the task when the step is removed or replaced, \"forget\" leaves it."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "The user's password, for a task that needs network access. Kept out of plan and state: state records only password_hmac. A password changed on the host isn't detected."
+    },
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Task folder, such as \\Conn3x\\. Defaults to \\. Made if it's missing."
+    },
+    "run_level": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"limited\" (default) or \"highest\", which runs elevated."
+    },
+    "user": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Account it runs as: SYSTEM, LOCAL SERVICE or NETWORK SERVICE with no password; another account with password_wo; or the login Conn3x uses, without one, to run unattended with no network access (S4U)."
+    },
+    "working_directory": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Folder it starts in."
+    }
+   },
+   "blocks": {
+    "trigger": {
+     "description": "When it runs. With none, it runs only when started.",
+     "args": {
+      "at": {
+       "type": "string",
+       "required": false,
+       "writeOnly": false,
+       "description": "For daily and once: local time on the host, such as 2026-01-01T03:00:00."
+      },
+      "days_interval": {
+       "type": "number",
+       "required": false,
+       "writeOnly": false,
+       "description": "For daily: every this many days. Defaults to 1."
+      },
+      "type": {
+       "type": "string",
+       "required": true,
+       "writeOnly": false,
+       "description": "\"boot\", \"logon\", \"daily\" or \"once\"."
+      }
+     },
+     "blocks": {}
+    }
+   }
+  },
+  "windows_service": {
+   "description": "A service that already exists on a Windows host: how it starts and whether it's running. Removing the step leaves it as it is.",
+   "doc": "https://docs.conn3x.org/modules/windows_service/",
+   "args": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Service name, not its display name, such as W3SVC."
+    },
+    "start_mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"auto\", \"delayed\", \"manual\" or \"disabled\". Left as it is when unset."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"running\" or \"stopped\". Left as it is when unset."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_share": {
+   "description": "Experimental. An SMB share on a Windows host, and who may use it. Access changes in place, never by recreating the share. Deny entries are left alone.",
+   "doc": "https://docs.conn3x.org/modules/windows_share/",
+   "args": {
+    "change_access": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Accounts with Change access, such as BUILTIN\\Administrators or CONTOSO\\Finance. When any of full_access, change_access and read_access is set, the three together are the share's whole set of Allow entries: others are revoked. Unset, all three, leaves access alone."
+    },
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Its description. Unset leaves it alone."
+    },
+    "full_access": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Accounts with Full access, such as BUILTIN\\Administrators or CONTOSO\\Finance. When any of full_access, change_access and read_access is set, the three together are the share's whole set of Allow entries: others are revoked. Unset, all three, leaves access alone."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The share name, such as Finance, or Backup$ for one hidden from browsing. Not C$, ADMIN$ or IPC$."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"delete\" (default) removes the share when the step goes, and leaves the folder and its files; \"forget\" leaves the share."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "The folder it shares, such as D:\\Shares\\Finance. It must exist; make it with a windows_directory step. A share's folder can't change in place."
+    },
+    "read_access": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Accounts with Read access, such as BUILTIN\\Administrators or CONTOSO\\Finance. When any of full_access, change_access and read_access is set, the three together are the share's whole set of Allow entries: others are revoked. Unset, all three, leaves access alone."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_update": {
+   "description": "The Windows updates a host should have installed, such as this month's security updates. It never reboots: reboot_required says whether Windows wants one, and windows_reboot does it.",
+   "doc": "https://docs.conn3x.org/modules/windows_update/",
+   "args": {
+    "accept_list": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Only these KB numbers, such as KB5034441, from those categories."
+    },
+    "categories": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Windows Update categories to install, such as SecurityUpdates and CriticalUpdates (the default). Also: Applications, Connectors, DefinitionUpdates, DeveloperKits, Drivers, FeaturePacks, Guidance, ServicePacks, Tools, UpdateRollups, Updates, Upgrades."
+    },
+    "reject_list": {
+     "type": "list(string)",
+     "required": false,
+     "writeOnly": false,
+     "description": "Never these KB numbers."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long downloading and installing may take. Defaults to \"2h\"."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_user": {
+   "description": "A local user on a Windows host. Settings left unset are left as they are.",
+   "doc": "https://docs.conn3x.org/modules/windows_user/",
+   "args": {
+    "description": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Description, up to 48 characters."
+    },
+    "disabled": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "true disables the account, false enables it."
+    },
+    "full_name": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Full name."
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "User name, up to 20 characters."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "What happens on the host when this resource is removed: \"forget\" (default) leaves the user, \"delete\" deletes it and leaves its profile folder."
+    },
+    "password_wo": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "Password, kept out of plan and state: state records only password_hmac. It's set when the user is made and whenever this value changes. A password changed on the host isn't detected."
+    }
+   },
+   "blocks": {}
+  },
+  "windows_wait_for": {
+   "description": "Waits until a path exists, a service is running or a TCP port is listening on a Windows host. Refresh checks again, so a later apply waits again if it stopped.",
+   "doc": "https://docs.conn3x.org/modules/windows_wait_for/",
+   "args": {
+    "path": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Path to wait for, such as C:\\app\\ready. Set exactly one of path, service and port."
+    },
+    "port": {
+     "type": "number",
+     "required": false,
+     "writeOnly": false,
+     "description": "TCP port to wait for a listener on. Set exactly one of path, service and port."
+    },
+    "service": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "Name of a service to wait for until it is running. Set exactly one of path, service and port."
+    },
+    "timeout": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "How long to wait. Defaults to \"5m\"."
+    }
+   },
+   "blocks": {}
+  },
+  "xml_value": {
+   "description": "One element's text or one attribute in an XML file, which should or should not be there. The rest of the file stays as it was, byte for byte.",
+   "doc": "https://docs.conn3x.org/modules/xml_value/",
+   "args": {
+    "create": {
+     "type": "bool",
+     "required": false,
+     "writeOnly": false,
+     "description": "Create the file when it is missing. Otherwise a missing file is an error."
+    },
+    "group": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's group, set with the edit. Unset keeps the group the file has."
+    },
+    "mode": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's mode, such as \"0644\", set with the edit. Unset keeps the mode the file has, or 0644 for a file it creates."
+    },
+    "on_remove": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"forget\" (default) leaves the file as it is, \"delete\" takes the edit back out."
+    },
+    "owner": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The file's owner, set with the edit. Unset keeps the owner the file has."
+    },
+    "path": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Absolute path of the file."
+    },
+    "state": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "\"present\" (default) or \"absent\", which takes the attribute or the element out."
+    },
+    "validate": {
+     "type": "string",
+     "required": false,
+     "writeOnly": true,
+     "description": "A command that checks the edited file before it replaces the old one, such as \"sshd -t -f %s\". %s stands for the temporary file. Runs only when the edit changes the file, and is kept out of state."
+    },
+    "value": {
+     "type": "string",
+     "required": false,
+     "writeOnly": false,
+     "description": "The element's text or the attribute's value, unescaped. Required unless state is \"absent\"."
+    },
+    "xpath": {
+     "type": "string",
+     "required": true,
+     "writeOnly": false,
+     "description": "Which element or attribute, from the root: element names with [@attr='value'] or [n] to pick one, ending in /@name for an attribute, such as /Server/Service/Connector[@port='8080']/@protocol. A missing last element is added."
+    }
+   },
+   "blocks": {}
+  }
+ }
+}
