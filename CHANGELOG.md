@@ -4,7 +4,7 @@
 
 - Completion inside a step: the step modules, then each module's arguments, required ones first, with types and descriptions.
 - Hover docs for modules and arguments, linking to each module's page.
-- `conn3x validate` runs when you save a circuit, and its errors and warnings appear in the file. Settings: `conn3x.path` and `conn3x.validateOnSave`.
+- `conn3x validate` runs when you save a circuit, and its errors and warnings appear in the file. Where the circuit needs a provider that `conn3x init` hasn't installed yet, it stays quiet. Settings: `conn3x.path` and `conn3x.validateOnSave`.
 - Module data from Conn3x v0.23.0, generated with `npm run modules`.
 
 ## 0.2.0

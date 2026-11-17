@@ -150,4 +150,18 @@ function diagnosticsFrom(json) {
     }));
 }
 
-module.exports = { blockPath, where, argsSet, diagnosticsFrom };
+// needsInit reports whether validate stopped because conn3x init hasn't run
+// here yet, which isn't a problem with the file.
+function needsInit(json) {
+  let out;
+  try {
+    out = JSON.parse(json);
+  } catch {
+    return false;
+  }
+  return (out.diagnostics ?? []).some((d) =>
+    /not installed|conn3x init|Missing required provider|Inconsistent dependency lock file|Module not installed/i.test(`${d.summary} ${d.detail ?? ""}`),
+  );
+}
+
+module.exports = { blockPath, where, argsSet, diagnosticsFrom, needsInit };

@@ -6,7 +6,7 @@ Write [Conn3x](https://conn3x.org) circuits with the editor doing its share. Ope
 - **Snippets** for every step module. Type `step-` and pick one, such as `step-package` or `step-firewalld`. You get the step with its required arguments in place, and you tab through them. `circuit`, `handler`, `rescue`, `always` and `prereq` have snippets too, and so do `task`, `plan` and `param` for the `.task.hcl` and `.plan.hcl` files `conn3x run` reads.
 - **Completion** inside a step: the step modules, then each module's arguments, required ones first, with their types. Arguments already set aren't offered again.
 - **Hover docs** on a module or an argument, from the same text as the [module reference](https://docs.conn3x.org/modules), with a link to the module's page.
-- **Errors in place.** When you save a circuit, the extension runs `conn3x validate` in its directory and marks what it finds, such as a missing required argument. It runs only where `conn3x init` has, and only in directories with a circuit. Set `conn3x.path` if `conn3x` isn't on your `PATH`, or turn it off with `conn3x.validateOnSave`.
+- **Errors in place.** When you save a circuit, the extension runs `conn3x validate` in its directory and marks what it finds, such as a missing required argument. It runs only in directories with a circuit, and says nothing until `conn3x init` has run there if the circuit needs a provider. Set `conn3x.path` if `conn3x` isn't on your `PATH`, or turn it off with `conn3x.validateOnSave`.
 - **Comment toggling, bracket matching and indentation** that know HCL.
 
 ```hcl

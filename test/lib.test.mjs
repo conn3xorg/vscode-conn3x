@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const { blockPath, where, argsSet, diagnosticsFrom } = require('../lib.js');
+const { blockPath, where, argsSet, diagnosticsFrom, needsInit } = require('../lib.js');
 const { modules } = require('../data/modules.json');
 
 test('the path follows named blocks and skips braces in maps, strings and comments', () => {
@@ -71,4 +71,13 @@ test('the module data covers every step snippet', () => {
     const p = [s.prefix].flat()[0];
     if (p.startsWith('step-')) assert.ok(modules[p.slice(5)], `${p} has no module data`);
   }
+});
+
+test('validate stopping for want of conn3x init is recognised', () => {
+  // As conn3x v0.23.0 prints it for a provider that isn't installed yet.
+  const missing = JSON.stringify({ diagnostics: [{ severity: 'error', summary: 'Missing required provider',
+    detail: "This configuration requires provider registry.opentofu.org/e-breuninger/netbox, but that provider isn't available." }] });
+  assert.equal(needsInit(missing), true);
+  const real = JSON.stringify({ diagnostics: [{ severity: 'error', summary: 'Missing required argument', detail: 'The argument "path" is required.' }] });
+  assert.equal(needsInit(real), false);
 });

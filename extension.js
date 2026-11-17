@@ -10,7 +10,7 @@ const vscode = require("vscode");
 const path = require("node:path");
 const fs = require("node:fs");
 const { execFile } = require("node:child_process");
-const { blockPath, where, argsSet, diagnosticsFrom } = require("./lib");
+const { blockPath, where, argsSet, diagnosticsFrom, needsInit } = require("./lib");
 const { modules, version } = require("./data/modules.json");
 
 const LANG = "conn3x-circuit";
@@ -95,21 +95,23 @@ function moduleDoc(name, m) {
   return md;
 }
 
-// validate runs conn3x validate in the saved file's directory, once it's
-// been initialized, and shows what it finds. Anything that keeps it from
-// running quietly leaves the problems as they were.
+// validate runs conn3x validate in the saved file's directory and shows
+// what it finds. A circuit that uses only Conn3x's own steps needs no
+// conn3x init, so it runs anywhere; where init is needed first, or anything
+// else keeps it from running, the problems are left as they were.
 function validate(doc, problems) {
   const config = vscode.workspace.getConfiguration("conn3x");
   if (!config.get("validateOnSave", true)) return;
   const dir = path.dirname(doc.fileName);
-  if (!fs.existsSync(path.join(dir, ".terraform"))) return; // conn3x init hasn't run here
   // A .tf file is only Conn3x's to check where a circuit sits beside it.
   if (doc.languageId !== LANG && !fs.readdirSync(dir).some((f) => f.endsWith(".circuit.hcl"))) return;
   const bin = config.get("path") || "conn3x";
   execFile(bin, ["validate", "-json", "-no-color"], { cwd: dir, timeout: 60000 }, (err, stdout) => {
     if (err && !stdout) return; // not installed, or failed before it could report
+    const found = diagnosticsFrom(stdout);
+    if (needsInit(stdout)) return;
     const byFile = new Map();
-    for (const p of diagnosticsFrom(stdout)) {
+    for (const p of found) {
       const file = path.resolve(dir, p.file);
       const d = new vscode.Diagnostic(
         new vscode.Range(p.start.line, p.start.character, p.end.line, p.end.character),
